@@ -1,0 +1,229 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>common.toolkit</groupId>
+	<artifactId>common-toolkit</artifactId>
+	<name>common-toolkit</name>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+
+
+	<properties>
+
+		<source.encoding>UTF-8</source.encoding>
+		<java.version>1.6</java.version>
+		<!-- 请自行修改仓库地址 -->
+		<repository.snapshots.url></repository.snapshots.url>
+		<repository.releases.url></repository.releases.url>
+		<!-- Maven plugin -->
+		<maven-source-plugin.version>2.0.3</maven-source-plugin.version>
+		<maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
+		<maven-jar-plugin.version>2.3.2</maven-jar-plugin.version>
+
+		<!-- dbcp -->
+		<commons-dbcp.version>1.2.2</commons-dbcp.version>
+		<!-- Servlet -->
+		<servlet.version>2.5</servlet.version>
+
+		<!-- Spring -->
+		<spring.core.version>3.1.0.RELEASE</spring.core.version>
+
+		<!-- Test -->
+		<junit.version>4.8.2</junit.version>
+		<spring.mock.version>2.0-rc2</spring.mock.version>
+
+		<!-- Log -->
+		<logback.version>1.0.0</logback.version>
+		<slf4j.version>1.6.4</slf4j.version>
+		<log4j.version>1.2.16</log4j.version>
+		<!-- Java Mail -->
+		<javamail.version>1.4.3</javamail.version>
+		<!-- SSH -->
+		<ganymed.ssh.version>build210</ganymed.ssh.version>
+
+		<!-- Json -->
+		<jsontools.version>1.7</jsontools.version>
+		<json.version>2.2</json.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<encoding>${source.encoding}</encoding>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Test -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- Spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-mock</artifactId>
+				<version>${spring.mock.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+
+
+		</dependencies>
+	</dependencyManagement>
+
+
+
+
+
+
+
+
+
+
+	<dependencies>
+
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-mock</artifactId>
+		</dependency>
+
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.core.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- Dbcp -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>${commons-dbcp.version}</version>
+		</dependency>
+
+
+
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- Log -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+
+		<!-- Java Mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>${javamail.version}</version>
+		</dependency>
+
+
+		<!-- SSH远程 -->
+		<dependency>
+			<groupId>ch.ethz.ganymed</groupId>
+			<artifactId>ganymed-ssh2</artifactId>
+			<version>${ganymed.ssh.version}</version>
+		</dependency>
+
+		<!-- JSON -->
+		<dependency>
+			<groupId>com.sdicons.jsontools</groupId>
+			<artifactId>jsontools-core</artifactId>
+			<version>${jsontools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+
+
+
+
+
+
+	</dependencies>
+
+
+
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>${repository.releases.url}</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>${repository.snapshots.url}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
+
+
+
+
+
+</project>

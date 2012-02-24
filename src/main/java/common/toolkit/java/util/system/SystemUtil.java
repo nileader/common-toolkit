@@ -1,0 +1,90 @@
+package common.toolkit.java.util.system;
+
+
+import static common.toolkit.java.constant.SystemPropertyConstant.OS_ARCH;
+import static common.toolkit.java.constant.SystemPropertyConstant.OS_NAME;
+import static common.toolkit.java.constant.SystemPropertyConstant.OS_VERSION;
+import static common.toolkit.java.constant.SystemPropertyConstant.USER_LANGYAGE;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import common.toolkit.java.util.StringUtil;
+
+/**
+ * 类说明: 系统信息工具类
+ * 
+ * @author 银时 yinshi.nc@taobao.com
+ */
+public class SystemUtil {
+
+	/**
+	 * 获取当前操作系统名称
+	 * @return 操作系统名称，例如windows xp，linux等。
+	 */
+	public static String getOSName() {
+		return StringUtil.trimToEmpty( System.getProperty( OS_NAME ) ).toLowerCase();
+	}
+
+	/**
+	 * 获取当前操作系统的语言
+	 * @return 操作系统语言，例如zh（中文），en（英文）
+	 */
+	public static String getOSLanguage() {
+		return StringUtil.trimToEmpty( System.getProperty( USER_LANGYAGE ) );
+	}
+
+	/**
+	 * 获取当前操作系统的版本
+	 * @return 操作系统版本
+	 */
+	public static String getOSVersion() {
+		return System.getProperty( OS_VERSION );
+	}
+
+	/**
+	 * 获取当前系统架构
+	 * @return 系统架构
+	 */
+	public static String getOSArch() {
+		return System.getProperty( OS_ARCH );
+	}
+
+	/**
+	 * 获取本机主机名称
+	 * @return 本机主机名称
+	 */
+
+	public static String getHostName() {
+		InetAddress inetAddress = null;
+		try {
+			inetAddress = InetAddress.getLocalHost();
+			if ( null == inetAddress ) {
+				return "Unknown Host";
+			} else {
+				return inetAddress.getHostName();
+			}
+		} catch ( UnknownHostException e ) {
+			return "Unknown Host";
+		}
+	}
+
+	/**
+	 * 获取本机IP地址
+	 * @return 本机IP
+	 */
+	public static String getIPAddress() {
+		InetAddress inetAddress = null;
+		try {
+			inetAddress = InetAddress.getLocalHost();
+			if ( null == inetAddress ) {
+				return "Unknow ip";
+			} else {
+				return inetAddress.getHostAddress();
+			}
+		} catch ( Exception e ) {
+			return "Unknow ip";
+		}
+	}
+
+}
