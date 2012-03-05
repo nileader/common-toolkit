@@ -11,11 +11,13 @@ import com.sdicons.json.mapper.JSONMapper;
 import com.sdicons.json.mapper.MapperException;
 import com.sdicons.json.model.JSONValue;
 import com.sdicons.json.parser.JSONParser;
+import common.toolkit.java.constant.EmptyObjectConstant;
+import common.toolkit.java.constant.SymbolConstant;
 
 /**
  * @author 银时 yinshi.nc@taobao.com
  */
-public class JSONObjectUtil {
+public class JsonUtil {
 
 	/**
 	 * 把json格式字符串解析成JSONObject对象，注意，本方法不会抛出任何异常。
@@ -69,7 +71,7 @@ public class JSONObjectUtil {
 	/**
 	 * 将一个JSON格式的字符串转换为Java对象
 	 * 
-	 * @param jsonStr 要转换的JSON格式的字符串
+	 * @param jsonStr   要转换的JSON格式的字符串
 	 * @param destClass 要将这个JSON格式的字符串转换为什么类型的对象
 	 * @return 转换之后的Java对象
 	 */
@@ -82,5 +84,24 @@ public class JSONObjectUtil {
 			throw new Exception( "在把字符串【" + jsonStr + "】转换为【" + destClass + "】类型的对象时，出现异常" + "，可能是你的字符串格式不对，请修正！", e );
 		}
 	}
+	
+	/**
+	 * check json string, and clean ext char, return like: []
+	 * @param originalStr
+	 */
+	public static String checkJsonContent( String originalStr ){
+		
+		if( StringUtil.isBlank( originalStr ) )
+			return EmptyObjectConstant.EMPTY_STRING;
+		
+		//if [ and ] is in right order
+		if( -1 == originalStr.indexOf( SymbolConstant.SQUARE_BRACKETS_LEFT ) || -1 == originalStr.indexOf( SymbolConstant.SQUARE_BRACKETS_RIGHT ) || originalStr.indexOf( SymbolConstant.SQUARE_BRACKETS_LEFT ) >= originalStr.indexOf( SymbolConstant.SQUARE_BRACKETS_RIGHT ) )
+			return EmptyObjectConstant.EMPTY_STRING;
+		
+		originalStr = originalStr.substring( originalStr.indexOf( SymbolConstant.SQUARE_BRACKETS_LEFT ), originalStr.lastIndexOf( SymbolConstant.SQUARE_BRACKETS_RIGHT ) + 1 );
+		return originalStr;
+	}
+	
+	
 
 }
