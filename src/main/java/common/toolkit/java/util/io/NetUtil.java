@@ -1,14 +1,8 @@
 package common.toolkit.java.util.io;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +12,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import common.toolkit.java.constant.RegExpConstant;
@@ -104,6 +99,11 @@ public class NetUtil {
 		GetMethod getMethod = new GetMethod( url );
 		// 使用系统提供的默认的恢复策略
 		getMethod.getParams().setParameter( HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler() );
+		HttpConnectionManagerParams managerParams = httpClient.getHttpConnectionManager().getParams();
+		// 设置连接超时时间(单位毫秒)
+		managerParams.setConnectionTimeout( 3000 );
+		// 设置读数据超时时间(单位毫秒)
+		managerParams.setSoTimeout( 20000 );
 		try {
 			// 执行getMethod
 			int statusCode = httpClient.executeMethod( getMethod );
