@@ -7,6 +7,7 @@ package common.toolkit.java.constant;
  */
 public class SymbolConstant {
 
+	/**,*/
 	public final static String COMMA = ",";
 	
 	public final static String SLASH		 		 = "/";
@@ -14,10 +15,17 @@ public class SymbolConstant {
 	
 	public final static String COLON    = ":"; 
 
-	public final static String SQUARE_BRACKETS_LEFT   = "[";
-	public final static String SQUARE_BRACKETS_RIGHT  = "]";
-	public final static String CURLY_BRACKETS_LEFT    = "{";
-	public final static String CURLY_BRACKETS_RIGHT   = "}";
+	/**[*/
+	public final static String SQUARE_BRACKETS_LEFT       = "[";
+	/**]*/
+	public final static String SQUARE_BRACKETS_RIGHT      = "]";
+	
+	public final static String CURLY_BRACKETS_LEFT        = "{";
+	public final static String CURLY_BRACKETS_RIGHT       = "}";
+	/**(*/
+	public final static String PARENTHESES_BRACKETS_LEFT  = "(";
+	/**)*/
+	public final static String PARENTHESES_BRACKETS_RIGHT = ")";
 	
 	
 	public final static String QUESTION_SIGN = "?";

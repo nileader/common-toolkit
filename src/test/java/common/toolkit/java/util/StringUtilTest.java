@@ -2,8 +2,6 @@ package common.toolkit.java.util;
 
 import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING;
 import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING_ARRAY;
-import static common.toolkit.java.constant.StringConstantTest.NILEADER_MAIL_STR;
-import static common.toolkit.java.constant.StringConstantTest.NILEADER_STR;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,6 +27,9 @@ public class StringUtilTest {
 	private final static String originalStr = "common-toolkit-ori";
 	private final static String defaultStr = "common-toolkit-test";
 
+	public static String NILEADER_MAIL_STR 	  = "nileader@gmail.com";
+	public static String NILEADER_STR      	  = "nileader";
+	
 	@Test
 	public void containsIgnoreCase() {
 
@@ -150,19 +151,26 @@ public class StringUtilTest {
 	
 
 	@Test
-	public void replace() {
+	public void replaceAll() {
 
 		String originalStr = "My name is nileader, i came form China, nileader is my network id.";
 		String replacement = "abc";
 
-		assertEquals( "My name is abc, i came form China, abc is my network id.",
-				StringUtil.replace( originalStr, NILEADER_STR, replacement ) );
-		assertEquals( "abc name is nileader, i came form China, nileader is my network id.", StringUtil.replace( originalStr, "My", replacement ) );
-		assertEquals( originalStr, StringUtil.replace( originalStr, "yinshi.nc", replacement ) );
-		assertEquals( EmptyObjectConstant.EMPTY_STRING, StringUtil.replace( null, "yinshi.nc", replacement ) );
-		assertEquals( EmptyObjectConstant.EMPTY_STRING, StringUtil.replace( EmptyObjectConstant.EMPTY_STRING, "yinshi.nc", replacement ) );
+		assertEquals( "My name is abc, i came form China, abc is my network id.", StringUtil.replaceAll( originalStr, replacement, NILEADER_STR ) );
+		
+		assertEquals( "My name is abc, i came form China, abc is my network abc.", StringUtil.replaceAll( originalStr, replacement, NILEADER_STR,"id" ) );
+		
+		assertEquals( "My name is abc, i came form China, abc is my network id.", StringUtil.replaceAll( originalStr, replacement, NILEADER_STR,"dd" ) );
+		
+		assertEquals( "My name is abc, i came form China, abc is my network id.", StringUtil.replaceAll( originalStr, replacement, NILEADER_STR,"" ) );
+		
+		assertEquals( "My name is abc, i came form China, abc is my network id.", StringUtil.replaceAll( originalStr, replacement, NILEADER_STR,null ) );
+		
+		assertEquals( "abc name is nileader, i came form China, nileader is my network id.", StringUtil.replaceAll( originalStr, replacement, "My" ) );
+		assertEquals( originalStr, StringUtil.replaceAll( originalStr, "yinshi.nc", replacement ) );
+		assertEquals( EmptyObjectConstant.EMPTY_STRING, StringUtil.replaceAll( null, replacement, "yinshi.nc" ) );
+		assertEquals( EmptyObjectConstant.EMPTY_STRING, StringUtil.replaceAll( EmptyObjectConstant.EMPTY_STRING, replacement, "yinshi.nc" ) );
 	}
-	
 	
 	@Test
 	public void replaceLast() {
