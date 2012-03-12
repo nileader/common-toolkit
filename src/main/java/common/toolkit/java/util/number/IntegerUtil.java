@@ -51,6 +51,19 @@ public class IntegerUtil {
 		return originalInt;
 	}
 	
+	/**
+	 * Return maxInt if too big, else return original.
+	 * @param originalInt
+	 * @param maxInt	max int
+	 * @return
+	 */
+	public static Integer maxIfTooBig ( Integer originalInt, Integer maxInt ) {
+		if ( originalInt >= maxInt) {
+			originalInt = maxInt;
+		}
+		return originalInt;
+	}
+	
 	
 	
 }

@@ -14,8 +14,8 @@
 		<source.encoding>UTF-8</source.encoding>
 		<java.version>1.6</java.version>
 		<!-- 请自行修改仓库地址 -->
-		<repository.snapshots.url>http://mvnrepo.taobao.ali.com/mvn/snapshots</repository.snapshots.url>
-		<repository.releases.url>http://mvnrepo.taobao.ali.com/mvn/releases</repository.releases.url>
+		<repository.snapshots.url></repository.snapshots.url>
+		<repository.releases.url></repository.releases.url>
 		<!-- Maven plugin -->
 		<maven-source-plugin.version>2.0.3</maven-source-plugin.version>
 		<maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
@@ -41,6 +41,8 @@
 		<javamail.version>1.4.3</javamail.version>
 		<!-- SSH -->
 		<ganymed.ssh.version>build210</ganymed.ssh.version>
+		<!-- HttpClient -->
+		<httpclient.version>3.1</httpclient.version>
 
 		<!-- Json -->
 		<jsontools.version>1.7</jsontools.version>
@@ -96,26 +98,93 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-mock</artifactId>
-				<version>${spring.mock.version}</version>
 				<scope>test</scope>
+				<version>${spring.mock.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<scope>provided</scope>
+				<version>${spring.core.version}</version>
 			</dependency>
 
 
 
+			<!-- Servlet -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${servlet.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+
+
+
+
+			<!-- DBCP -->
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>${commons-dbcp.version}</version>
+			</dependency>
+
+			<!-- HttpClient -->
+			<dependency>
+				<groupId>apache-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>${httpclient.version}</version>
+			</dependency>
+			<!-- SSH远程 -->
+			<dependency>
+				<groupId>ch.ethz.ganymed</groupId>
+				<artifactId>ganymed-ssh2</artifactId>
+				<scope>provided</scope>
+				<version>${ganymed.ssh.version}</version>
+			</dependency>
+
+			<!-- Java Mail -->
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>${javamail.version}</version>
+			</dependency>
+
+
+			<!-- JSON -->
+			<dependency>
+				<groupId>com.sdicons.jsontools</groupId>
+				<artifactId>jsontools-core</artifactId>
+				<version>${jsontools.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>${json.version}</version>
+			</dependency>
+
+
+			<!-- Log -->
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
-
-
-
-
-
-
-
-
-
 	<dependencies>
-
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -125,57 +194,38 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-mock</artifactId>
 		</dependency>
-
-
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring.core.version}</version>
-			<scope>provided</scope>
 		</dependency>
-
-
-		<!-- Dbcp -->
+		<!-- DBCP -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
-			<version>${commons-dbcp.version}</version>
 		</dependency>
-
 		<!-- HttpClient -->
 		<dependency>
 			<groupId>apache-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
 		</dependency>
-
-
-
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>${servlet.version}</version>
-			<scope>provided</scope>
 		</dependency>
-
-
 		<!-- Log -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
 		</dependency>
 
 
@@ -183,30 +233,23 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>${javamail.version}</version>
 		</dependency>
-
 
 		<!-- SSH远程 -->
 		<dependency>
 			<groupId>ch.ethz.ganymed</groupId>
 			<artifactId>ganymed-ssh2</artifactId>
-			<version>${ganymed.ssh.version}</version>
 		</dependency>
 
 		<!-- JSON -->
 		<dependency>
 			<groupId>com.sdicons.jsontools</groupId>
 			<artifactId>jsontools-core</artifactId>
-			<version>${jsontools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>${json.version}</version>
 		</dependency>
-
-
 
 	</dependencies>
 

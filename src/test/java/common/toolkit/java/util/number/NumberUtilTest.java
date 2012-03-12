@@ -13,6 +13,28 @@ import org.junit.Test;
  */
 public class NumberUtilTest {
 
+	
+	@Test
+	public void isNegative() {
+		assertTrue( NumberUtil.isNegative( -1 ) );
+		assertTrue( NumberUtil.isNegative( -0.1 ) );
+		assertTrue( !NumberUtil.isNegative( 0 ) );
+		assertTrue( !NumberUtil.isNegative( 1 ) );
+		assertTrue( !NumberUtil.isNegative( 1.2 ) );
+	}
+	
+	@Test
+	public void isNegativeArray() {
+		assertTrue( NumberUtil.isNegative( -1,-2 ) );
+		assertTrue( NumberUtil.isNegative( -0.1,2 ) );
+		assertTrue( !NumberUtil.isNegative( 0,1 ) );
+		assertTrue( !NumberUtil.isNegative( 1,2 ) );
+		assertTrue( !NumberUtil.isNegative( 1.2,2.6 ) );
+	}
+	
+	
+	
+	
 	@Test
 	public void isInInterval() {
 		
@@ -40,8 +62,6 @@ public class NumberUtilTest {
 		
 		assertTrue( !NumberUtil.isInInterval( "(2,5]", "5.3" ) );
 		assertTrue( !NumberUtil.isInInterval( "(2,5]", "6.3" ) );
-		
-		
 		
 	}
 

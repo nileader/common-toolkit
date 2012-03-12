@@ -14,6 +14,40 @@ import common.toolkit.java.util.StringUtil;
  */
 public class NumberUtil {
 
+	
+	
+	/**
+	 * Check if the number is positive
+	 * @param number
+	 * @return
+	 */
+	public static boolean isNegative( Number number ) {
+		if( number.doubleValue() < 0 ){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if the number is positive
+	 * @param number
+	 * @return
+	 */
+	public static boolean isNegative( Number... numberArray ) {
+		
+		if( null == numberArray || 0 == numberArray.length )
+			return false;
+		
+		for( Number number : numberArray ){
+			if( number.doubleValue() < 0 ){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
 	/**
 	 * Check if in interval
 	 * @param interval such as: "[20,80]","(34,41521]"

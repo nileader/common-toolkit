@@ -35,6 +35,33 @@ public class ListUtilTest {
 		assertEquals(list,   ListUtil.parseList( EMPTY_STRING, EMPTY_STRING ) );
 	}
 	
+	@Test
+	public void subList( ) {
+		
+		
+		List<String> list = new ArrayList< String >();
+		list.add( "1" );
+		list.add( "2" );
+		list.add( "3" );
+		list.add( "4" );
+		
+		
+		List<String> list1 = new ArrayList< String >();
+		list.add( "2" );
+		list.add( "3" );
+		
+		List<String> list2 = new ArrayList< String >();
+		list.add( "2" );
+		list.add( "3" );
+		list.add( "4" );
+		
+		
+		assertEquals( list1, ListUtil.subList( list1, 1, 2 ) );
+		assertEquals( list1, ListUtil.subList( list2, 1, 3 ) );
+		assertEquals( list1, ListUtil.subList( list2, 1, 4 ) );
+		
+	}
+	
 	
 	
 }
