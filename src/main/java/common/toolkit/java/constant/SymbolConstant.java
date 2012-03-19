@@ -12,7 +12,7 @@ public class SymbolConstant {
 	
 	public final static String SLASH		 		 = "/";
 	public final static String BACK_SLASH	 = "\\";
-	
+	/**:*/
 	public final static String COLON    = ":"; 
 
 	/**[*/
@@ -27,17 +27,19 @@ public class SymbolConstant {
 	/**)*/
 	public final static String PARENTHESES_BRACKETS_RIGHT = ")";
 	
-	
 	public final static String QUESTION_SIGN = "?";
 	public final static String AND_SIGN = "&";
 	public final static String POUND = "#";
 	
+	/** $ */
+	public final static String DOLLAR_SIGN = "$";
 	
 	public final static String ELLIPSIS_THREE = "...";
 	public final static String ELLIPSIS_SIX   = "......";
 	
 	
 	public final static String EQUAL_SIGN = "=";
+	/**-*/
 	public final static String MINUS_SIGN = "-";
 	public final static String PLUS_SIGN= "+";
 	public final static String MULTIPLICATION_SIGN = "*";

@@ -507,7 +507,8 @@ public class StringUtil {
 	}
 	
 	/**
-	 * toString()方法，不会返回null
+	 * toString()方法<br>
+	 * Note:不会出现npe，不会返回null
 	 * @param t
 	 * @return
 	 */
