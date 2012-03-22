@@ -10,6 +10,8 @@ import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import common.toolkit.java.constant.SymbolConstant;
 import common.toolkit.java.entity.db.DBConnectionResource;
@@ -22,6 +24,8 @@ import common.toolkit.java.util.StringUtil;
  */
 public class DbcpUtil {
 
+	private static Log LOG = LogFactory.getLog(DbcpUtil.class);
+	
 	private static BasicDataSource dataSource = null;
 
 	
@@ -74,9 +78,10 @@ public class DbcpUtil {
 			p.setProperty( "removeAbandonedTimeout", "120" );
 			p.setProperty( "testOnBorrow", "true" );
 			p.setProperty( "logAbandoned", "true" );
+			LOG.warn( "Start init datasource[driverName:" + driverClassName + ", url: " + p.getProperty( "url" ) + ", username: " + username + ", password: " + password );
 			DbcpUtil.dataSource = ( BasicDataSource ) BasicDataSourceFactory.createDataSource( p );
 		} catch ( Exception e ) {
-			throw new Exception( "创建数据源失败", e );
+			throw new Exception( "创建数据源失败: " + e.getMessage(), e.getCause() );
 		}
 	}
 
@@ -137,7 +142,7 @@ public class DbcpUtil {
 			try {
 				statement.close();
 			} catch ( SQLException e ) {
-			}// IGNORE}
+			}// IGNORE
 	}
 
 	/**
@@ -148,7 +153,7 @@ public class DbcpUtil {
 			try {
 				statement.close();
 			} catch ( SQLException e ) {
-			}// IGNORE}
+			}// IGNORE
 	}
 
 	/**
@@ -159,7 +164,7 @@ public class DbcpUtil {
 			try {
 				conn.close();
 			} catch ( SQLException e ) {
-			}// IGNORE}
+			}// IGNORE
 	}
 
 	/**
@@ -177,7 +182,7 @@ public class DbcpUtil {
 			Statement stmt = conn.createStatement();
 			return new DBConnectionResource( conn, stmt, stmt.executeQuery( querySql ) );
 		} catch ( Exception e ) {
-			throw new Exception( "执行数据库查询[" + querySql + "]出错", e );
+			throw new Exception( "执行数据库查询[" + querySql + "]出错: " + e.getMessage(), e.getCause() );
 		}
 	}
 
@@ -195,7 +200,7 @@ public class DbcpUtil {
 			stmt = conn.createStatement();
 			return stmt.executeUpdate( insertSql );
 		} catch ( Exception e ) {
-			throw new Exception( "执行数据库插入[" + insertSql + "]出错", e );
+			throw new Exception( "Error when execute insert [" + insertSql + "],error: " + e.getMessage() , e.getCause() );
 		} finally {
 			DbcpUtil.closeStatement( stmt );
 			DbcpUtil.returnBackConnectionToPool( conn );
@@ -222,7 +227,7 @@ public class DbcpUtil {
 			}
 			return -1;
 		} catch ( Exception e ) {
-			throw new Exception( "执行数据库插入[" + insertSql + "]出错", e );
+			throw new Exception( "执行数据库插入[" + insertSql + "]出错: " + e.getMessage(), e.getCause() );
 		} finally {
 			DbcpUtil.closeResultSetAndStatement( rs, stmt );
 			DbcpUtil.returnBackConnectionToPool( conn );
@@ -243,7 +248,7 @@ public class DbcpUtil {
 			stmt = conn.createStatement();
 			return stmt.executeUpdate( updateSql );
 		} catch ( Exception e ) {
-			throw new Exception( "执行数据库更新[" + updateSql + "]出错", e );
+			throw new Exception( "执行数据库更新[" + updateSql + "]出错: " + e.getMessage(), e.getCause() );
 		} finally {
 			DbcpUtil.closeStatement( stmt );
 			DbcpUtil.returnBackConnectionToPool( conn );
@@ -264,7 +269,7 @@ public class DbcpUtil {
 			stmt = conn.createStatement();
 			return stmt.executeUpdate( deleteSql );
 		} catch ( Exception e ) {
-			throw new Exception( "执行数据库删除[" + deleteSql + "]出错", e );
+			throw new Exception( "执行数据库删除[" + deleteSql + "]出错: " + e.getMessage(), e.getCause() );
 		} finally {
 			DbcpUtil.closeStatement( stmt );
 			DbcpUtil.returnBackConnectionToPool( conn );

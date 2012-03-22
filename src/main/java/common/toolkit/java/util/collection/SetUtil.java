@@ -3,6 +3,7 @@ package common.toolkit.java.util.collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import common.toolkit.java.constant.SymbolConstant;
 import common.toolkit.java.util.StringUtil;
 
 /**
@@ -29,6 +30,15 @@ public class SetUtil {
 			set.add( StringUtil.trimToEmpty( str ) );
 		}
 		return set;
+	}
+	
+	/**
+	 * parse the string to Set
+	 * @param @param originalStr abc, def,helloword,myname
+	 * @return Set<String>
+	 */
+	public static Set< String > parseSet( String originalStr ) {
+		return parseSet( originalStr, SymbolConstant.COMMA );
 	}
 
 }

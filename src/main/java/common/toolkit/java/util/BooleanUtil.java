@@ -14,7 +14,7 @@ public class BooleanUtil {
 	 * 
 	 * @return true only if "true", else return false;
 	 */
-	public static boolean parseString( String booleanStr ) {
+	public static boolean parseBoolean( String booleanStr ) {
 		
 		if( StringUtil.isBlank( booleanStr ) )
 			return false;

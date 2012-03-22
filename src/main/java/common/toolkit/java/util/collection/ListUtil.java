@@ -1,11 +1,10 @@
 package common.toolkit.java.util.collection;
 
-import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import common.toolkit.java.constant.EmptyObjectConstant;
 import common.toolkit.java.constant.SymbolConstant;
 import common.toolkit.java.util.StringUtil;
 import common.toolkit.java.util.number.IntegerUtil;
@@ -49,7 +48,8 @@ public class ListUtil {
 		int endIndex = IntegerUtil.maxIfTooBig( fromIndex + size, list.size() );
 		return list.subList( fromIndex, endIndex );
 	}
-
+	
+	
 	/**
 	 * Convert Collection< String > to String, 并且使用split来分隔，不含空格。
 	 * @param split 需要分隔的字符
@@ -58,13 +58,13 @@ public class ListUtil {
 	public static String toString( Collection< String > collection, String split ) {
 
 		if ( null == collection || collection.isEmpty() ) {
-			return EMPTY_STRING;
+			return EmptyObjectConstant.EMPTY_STRING;
 		}
-		String str = EMPTY_STRING;
+		String str = EmptyObjectConstant.EMPTY_STRING;
 		for ( String _str : collection ) {
 			str += _str + split;
 		}
-		str = StringUtil.replaceLast( str, split, EMPTY_STRING );
+		str = StringUtil.replaceLast( str, split, EmptyObjectConstant.EMPTY_STRING );
 		return str;
 	}
 
@@ -76,5 +76,6 @@ public class ListUtil {
 	public static String toString( Collection< String > collection ) {
 		return toString( collection, SymbolConstant.COMMA );
 	}
+	
 
 }
