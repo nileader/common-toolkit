@@ -9,9 +9,11 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import common.toolkit.java.constant.EncodingConstant;
 import common.toolkit.java.util.StringUtil;
@@ -195,6 +197,24 @@ public class FileUtil {
 		}
 	}
 	
+	/**
+	 * Note: You need to close Reader.
+	 * @param filePath 文件路径
+	 * @return String  文件内容
+	 * @throws IOException 
+	 */
+	public static Reader readFileReader( String filePath ) throws IOException {
+
+		File file = new File( filePath );
+		FileInputStream fileInputStream = null;
+		try {
+			fileInputStream = new FileInputStream( file );
+		} catch ( FileNotFoundException e ) {
+			throw e;
+		}
+		return new InputStreamReader( fileInputStream );
+	}
+	
 	
 	
 	/**
@@ -216,6 +236,27 @@ public class FileUtil {
 		}
 		return new BufferedReader( new InputStreamReader( fileInputStream, encoding ) );
 	}
+	
+	
+	/**
+	 * Read properties file.
+	 * @param filePath
+	 * @return
+	 * @throws IOException
+	 */
+	public static Properties readPropertyFile( String filePath ) throws IOException {
+		
+		Properties properties = new Properties();
+		Reader reader = null;
+		try {
+			reader = FileUtil.readFileReader( filePath );
+			properties.load( reader );
+			return properties;
+		} finally{
+			IOUtil.closeReader( reader );
+		}
+	}
+	
 	
 	
 	

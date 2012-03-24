@@ -29,14 +29,14 @@ public class DbcpUtil {
 	private static BasicDataSource dataSource = null;
 
 	
-	private static String driverClassName    = "com.mysql.jdbc.Driver";
-	private static String dbJDBCUrl             = "jdbc:mysql://localhost:3306/yinshi-test";
-	private static String characterEncoding ="UTF-8";
-	private static String username			     ="root";
-	private static String password			  ="123456";
-	private static int      maxActive			  = 30;
-	private static int 	  maxIdle				  = 10;
-	private static int 	  maxWait               = 10000;
+	public static String driverClassName    = "com.mysql.jdbc.Driver";
+	public static String dbJDBCUrl             = "jdbc:mysql://localhost:3306/yinshi-test";
+	public static String characterEncoding ="UTF-8";
+	public static String username			     ="root";
+	public static String password			  ="123456";
+	public static int      maxActive			  = 30;
+	public static int 	  maxIdle				  = 10;
+	public static int 	  maxWait               = 10000;
 	
 	public DbcpUtil() {
 	}

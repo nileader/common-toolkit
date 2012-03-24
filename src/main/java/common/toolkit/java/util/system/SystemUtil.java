@@ -6,10 +6,15 @@ import static common.toolkit.java.constant.SystemPropertyConstant.OS_NAME;
 import static common.toolkit.java.constant.SystemPropertyConstant.OS_VERSION;
 import static common.toolkit.java.constant.SystemPropertyConstant.USER_LANGYAGE;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Properties;
 
+import common.toolkit.java.constant.BaseConstant;
 import common.toolkit.java.util.StringUtil;
+import common.toolkit.java.util.io.FileUtil;
 
 /**
  * 类说明: 系统信息工具类
@@ -86,5 +91,29 @@ public class SystemUtil {
 			return "Unknow ip";
 		}
 	}
+	
+	/**
+	 * Load the *.properties for config
+	 * @throws IOException 
+	 * */
+	public static Properties loadProperty() throws IOException{
+		
+		String filePathOfProperty = StringUtil.trimToEmpty( System.getProperty( BaseConstant.SYSTEM_PROPERTY_CONFIG_FILE_PATH ) );
+		if( StringUtil.isBlank( filePathOfProperty ) ){
+			throw new FileNotFoundException( "Please defined,such as -DconfigFilePath=\"W:\\TaoKeeper\\taokeeper\\config\\config-test.properties\"" );
+		}
+		return FileUtil.readPropertyFile( filePathOfProperty );
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
