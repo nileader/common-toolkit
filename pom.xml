@@ -4,7 +4,7 @@
 	<groupId>common.toolkit</groupId>
 	<artifactId>common-toolkit</artifactId>
 	<name>common-toolkit</name>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.2-log4j</version>
 	<packaging>jar</packaging>
 
 
@@ -21,30 +21,17 @@
 		<maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
 		<maven-jar-plugin.version>2.3.2</maven-jar-plugin.version>
 
-		<!-- dbcp -->
 		<commons-dbcp.version>1.2.2</commons-dbcp.version>
-		<!-- Servlet -->
 		<servlet.version>2.5</servlet.version>
-
-		<!-- Spring -->
 		<spring.core.version>3.1.0.RELEASE</spring.core.version>
-
-		<!-- Test -->
 		<junit.version>4.8.2</junit.version>
 		<spring.mock.version>2.0-rc2</spring.mock.version>
-
-		<!-- Log -->
-		<logback.version>1.0.0</logback.version>
-		<slf4j.version>1.6.4</slf4j.version>
-		<log4j.version>1.2.16</log4j.version>
-		<!-- Java Mail -->
+		<commons-logging.version>1.1.1</commons-logging.version>
+		<slf4j.version>1.5.8</slf4j.version>
+		<log4j.version>1.2.14</log4j.version>
 		<javamail.version>1.4.3</javamail.version>
-		<!-- SSH -->
 		<ganymed.ssh.version>build210</ganymed.ssh.version>
-		<!-- HttpClient -->
 		<httpclient.version>3.1</httpclient.version>
-
-		<!-- Json -->
 		<jsontools.version>1.7</jsontools.version>
 		<json.version>2.2</json.version>
 	</properties>
@@ -166,19 +153,28 @@
 
 			<!-- Log -->
 			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>${logback.version}</version>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${commons-logging.version}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>${logback.version}</version>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>jcl-over-slf4j</artifactId>
+				<artifactId>jcl104-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>provided</scope>
 			</dependency>
 
 		</dependencies>
@@ -215,18 +211,6 @@
 			<artifactId>servlet-api</artifactId>
 		</dependency>
 		<!-- Log -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
 
 
 		<!-- Java Mail -->
@@ -249,6 +233,19 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl104-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 
 	</dependencies>
