@@ -21,19 +21,21 @@ import common.toolkit.java.entity.io.SSHResource;
 import common.toolkit.java.exception.IllegalParamException;
 import common.toolkit.java.exception.SSHException;
 import common.toolkit.java.util.StringUtil;
+import common.toolkit.java.util.number.IntegerUtil;
 
 /**
- * 类说明: SSH相关工具类
- * 
- * @author 银时 yinshi.nc@taobao.com
+ * Description: SSH Util
+ * @author  nileader / nileader@gmail.com
+ * @Date	 2012-3-28
  */
 public class SSHUtil {
 
-	private final static String USERNAME   = "nobody";
-	private final static String PASSWORD   = "look";
+	private final static String USERNAME = "nobody";
+	private final static String PASSWORD = "look";
+	private final static int PORT        = 22;
 
-	private final static String COMMAND_TOP   = "top -b -n 1 | head -5";
-	private final static String COMMAND_DF_LH = "df -lh"; 
+	private final static String COMMAND_TOP = "top -b -n 1 | head -5";
+	private final static String COMMAND_DF_LH = "df -lh";
 	private final static String LOAD_AVERAGE_STRING = "load average: ";
 	private final static String CPU_USAGE_STRING = "Cpu(s):";
 	private final static String MEM_USAGE_STRING = "Mem:";
@@ -49,9 +51,8 @@ public class SSHUtil {
 	 * @throws Exception
 	 * @since 1.0.0
 	 */
-	public static HostPerformanceEntity getHostPerformance( String ip, String userName, String password ) throws SSHException {
+	public static HostPerformanceEntity getHostPerformance( String ip, int port, String userName, String password ) throws SSHException {
 
-		
 		if ( StringUtil.isBlank( ip ) ) {
 			try {
 				throw new IllegalParamException( "Param ip is empty!" );
@@ -59,11 +60,12 @@ public class SSHUtil {
 				throw new SSHException( e.getMessage(), e );
 			}
 		}
+		port = IntegerUtil.defaultIfNotPositive( port, 22 );
 		userName = StringUtil.defaultIfBlank( userName, USERNAME );
 		password = StringUtil.defaultIfBlank( password, PASSWORD );
 		Connection conn = null;
 		try {
-			conn = new Connection( ip );
+			conn = new Connection( ip, port );
 			conn.connect( null, 2000, 2000 );
 			boolean isAuthenticated = conn.authenticateWithPassword( userName, password );
 			if ( isAuthenticated == false ) {
@@ -79,20 +81,9 @@ public class SSHUtil {
 	}
 
 	/**
-	 * Get SystemPerformanceEntity[cpuUsage, memUsage, load] by ssh with default
-	 * username:nobody, password: look. 方法返回前已经释放了所有资源，调用方不需要关心
-	 * 
-	 * @since 1.0.0
-	 */
-	public static HostPerformanceEntity getHostPerformance( String ip ) throws SSHException {
-		return getHostPerformance( ip, USERNAME, PASSWORD );
-	}
-
-	/**
 	 * GetSystemPerformance
 	 * 
-	 * @param conn
-	 *            a connection
+	 * @param conn a connection
 	 * @return double cpu usage
 	 * @throws Exception
 	 */
@@ -170,35 +161,31 @@ public class SSHUtil {
 					continue;
 				}
 			}// parse the top output
-			
-			//统计磁盘使用状况
+
+			// 统计磁盘使用状况
 			Map< String, String > diskUsageMap = new HashMap< String, String >();
 			session = conn.openSession();
 			session.execCommand( COMMAND_DF_LH );
 			read = new BufferedReader( new InputStreamReader( new StreamGobbler( session.getStdout() ) ) );
 			/**
-			 * 内容通常是这样：
-			 * Filesystem            容量  已用 可用 已用% 挂载点
-				/dev/xvda2            5.8G  3.2G  2.4G  57% /
-				/dev/xvda1             99M  8.0M   86M   9% /boot
-				none                  769M     0  769M   0% /dev/shm
-				/dev/xvda7             68G  7.1G   57G  12% /home
-				/dev/xvda6            2.0G   36M  1.8G   2% /tmp
-				/dev/xvda5            2.0G  199M  1.7G  11% /var
+			 * 内容通常是这样： Filesystem 容量 已用 可用 已用% 挂载点 /dev/xvda2 5.8G 3.2G 2.4G
+			 * 57% / /dev/xvda1 99M 8.0M 86M 9% /boot none 769M 0 769M 0%
+			 * /dev/shm /dev/xvda7 68G 7.1G 57G 12% /home /dev/xvda6 2.0G 36M
+			 * 1.8G 2% /tmp /dev/xvda5 2.0G 199M 1.7G 11% /var
 			 * */
 			boolean isFirstLine = true;
 			while ( ( line = read.readLine() ) != null ) {
 
-				if( isFirstLine ){
+				if ( isFirstLine ) {
 					isFirstLine = false;
 					continue;
 				}
-				if( StringUtil.isBlank( line ) )
+				if ( StringUtil.isBlank( line ) )
 					continue;
-				
-				line = line.replaceAll(" {1,}", WORD_SEPARATOR );
+
+				line = line.replaceAll( " {1,}", WORD_SEPARATOR );
 				String[] lineArray = line.split( WORD_SEPARATOR );
-				if( 6 != lineArray.length ){
+				if ( 6 != lineArray.length ) {
 					continue;
 				}
 				String diskUsage = lineArray[4];
@@ -222,24 +209,18 @@ public class SSHUtil {
 		return systemPerformanceEntity;
 	}
 
-	
-	
-	
-	
-	
 	/**
 	 * SSH 方式登录远程主机，执行命令,方法内部会关闭所有资源，调用方无须关心。
 	 * @param ip 主机ip
-	 * @param username	用户名
-	 * @param password	密码
-	 * @param command	要执行的命令
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param command 要执行的命令
 	 */
-	public static String execute( String ip, String username, String password, String command ) throws SSHException {
+	public static String execute( String ip, int port, String username, String password, String command ) throws SSHException {
 
-		
-		if( StringUtil.isBlank( command ) )
+		if ( StringUtil.isBlank( command ) )
 			return EMPTY_STRING;
-		
+		port = IntegerUtil.defaultIfNotPositive( port, 22 );
 		Connection conn = null;
 		Session session = null;
 		BufferedReader read = null;
@@ -250,52 +231,67 @@ public class SSHUtil {
 			}
 			username = StringUtil.defaultIfBlank( username, USERNAME );
 			password = StringUtil.defaultIfBlank( password, PASSWORD );
-			conn = new Connection( ip );
+			conn = new Connection( ip, port );
 			conn.connect( null, 2000, 2000 );
 			boolean isAuthenticated = conn.authenticateWithPassword( username, password );
 			if ( isAuthenticated == false ) {
 				throw new Exception( "SSH authentication failed with [ userName: " + username + ", password: " + password + "]" );
 			}
-				
+
 			session = conn.openSession();
 			session.execCommand( command );
-			
+
 			read = new BufferedReader( new InputStreamReader( new StreamGobbler( session.getStdout() ) ) );
 			String line = "";
 			while ( ( line = read.readLine() ) != null ) {
 				sb.append( line ).append( BR );
 			}
 			return sb.toString();
-		}catch ( Exception e ) {
+		} catch ( Exception e ) {
 			throw new SSHException( "SSH远程执行command: " + command + " 出现错误: " + e.getMessage(), e );
-		}finally{
-			if( null != read ){
+		} finally {
+			if ( null != read ) {
 				try {
 					read.close();
-				} catch ( IOException e ) {}
+				} catch ( IOException e ) {
+				}
 			}
-			if( null != session )
+			if ( null != session )
 				session.close();
-			if( null != conn )
+			if ( null != conn )
 				conn.close();
 		}
 	}
 	
 	
+	/**
+	 * SSH 方式登录远程主机，执行命令,方法内部会关闭所有资源，调用方无须关心。
+	 * @param ip
+	 * @param username
+	 * @param password
+	 * @param command
+	 * @return
+	 * @throws SSHException
+	 */
+	public static String execute( String ip, String username, String password, String command ) throws SSHException {
+		return SSHUtil.execute( ip, PORT, username, password, command );
+	}
 	
+	
+	
+
 	/**
 	 * SSH 方式登录远程主机，执行命令,方法内部会关闭所有资源,此方法不会返回任何内容。
 	 * @param ip 主机ip
-	 * @param username	用户名
-	 * @param password	密码
-	 * @param command	要执行的命令
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param command 要执行的命令
 	 */
-	public static void executeNoOutPut( String ip, String username, String password, String command ) throws SSHException {
+	public static void executeNoOutPut( String ip, int port, String username, String password, String command ) throws SSHException {
 
-		
-		if( StringUtil.isBlank( command ) )
+		if ( StringUtil.isBlank( command ) )
 			return;
-		
+		port = IntegerUtil.defaultIfNotPositive( port, 22 );
 		Connection conn = null;
 		Session session = null;
 		BufferedReader read = null;
@@ -305,76 +301,99 @@ public class SSHUtil {
 			}
 			username = StringUtil.defaultIfBlank( username, USERNAME );
 			password = StringUtil.defaultIfBlank( password, PASSWORD );
-			conn = new Connection( ip );
+			conn = new Connection( ip, port );
 			conn.connect( null, 2000, 2000 );
 			boolean isAuthenticated = conn.authenticateWithPassword( username, password );
 			if ( isAuthenticated == false ) {
 				throw new Exception( "SSH authentication failed with [ userName: " + username + ", password: " + password + "]" );
 			}
-				
+
 			session = conn.openSession();
 			session.execCommand( command );
 			Thread.sleep( 10000 );
 
-		}catch ( Exception e ) {
+		} catch ( Exception e ) {
 			throw new SSHException( "SSH远程执行command: " + command + " 出现错误: " + e.getMessage(), e );
-		}finally{
-			if( null != read ){
+		} finally {
+			if ( null != read ) {
 				try {
 					read.close();
-				} catch ( IOException e ) {}
+				} catch ( IOException e ) {
+				}
 			}
-			if( null != session )
+			if ( null != session )
 				session.close();
-			if( null != conn )
+			if ( null != conn )
 				conn.close();
 		}
 	}
 	
 	
 	
-	
-	
-	
-	
-	
 	/**
-	 * SSH 方式登录远程主机，执行命令,方法内部没有关闭资源，调用方需要调用SSHResource.closeAllResource()来关闭所有资源。
+	 * SSH 方式登录远程主机，执行命令,方法内部会关闭所有资源,此方法不会返回任何内容。
 	 * @param ip 主机ip
-	 * @param username	用户名
-	 * @param password	密码
-	 * @param command	要执行的命令
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param command 要执行的命令
+	 */
+	public static void executeNoOutPut( String ip, String username, String password, String command ) throws SSHException {
+		SSHUtil.executeNoOutPut( ip, PORT, username, password, command );
+	}
+	
+	
+
+	/**
+	 * SSH
+	 * 方式登录远程主机，执行命令,方法内部没有关闭资源，调用方需要调用SSHResource.closeAllResource()来关闭所有资源。
+	 * @param ip 主机ip
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param command 要执行的命令
 	 * @return SSHResource 包含Connection, Session, BufferedReader
 	 */
-	public static SSHResource executeWithoutHandleBufferedReader( String ip, String username, String password, String command ) throws SSHException {
+	public static SSHResource executeWithoutHandleBufferedReader( String ip, int port, String username, String password, String command ) throws SSHException {
 
-		
-		if( StringUtil.isBlank( command ) )
+		if ( StringUtil.isBlank( command ) )
 			return null;
-		
+		port = IntegerUtil.defaultIfNotPositive( port, 22 );
 		SSHResource sshResource = new SSHResource();
-		
+
 		try {
 			if ( StringUtil.isBlank( ip ) ) {
 				throw new IllegalParamException( "Param ip is empty!" );
 			}
 			username = StringUtil.defaultIfBlank( username, USERNAME );
 			password = StringUtil.defaultIfBlank( password, PASSWORD );
-			sshResource.conn = new Connection( ip );
+			sshResource.conn = new Connection( ip, port );
 			sshResource.conn.connect( null, 2000, 2000 );
 			boolean isAuthenticated = sshResource.conn.authenticateWithPassword( username, password );
 			if ( isAuthenticated == false ) {
 				throw new Exception( "SSH authentication failed with [ userName: " + username + ", password: " + password + "]" );
 			}
-				
+
 			sshResource.session = sshResource.conn.openSession();
 			sshResource.session.execCommand( command );
 			sshResource.setReader( new BufferedReader( new InputStreamReader( new StreamGobbler( sshResource.session.getStdout() ) ) ) );
-			
+
 			return sshResource;
-		}catch ( Exception e ) {
+		} catch ( Exception e ) {
 			throw new SSHException( "SSH远程执行command: " + command + " 出现错误: " + e.getMessage(), e );
 		}
+	}
+	
+	
+	/**
+	 * SSH
+	 * 方式登录远程主机，执行命令,方法内部没有关闭资源，调用方需要调用SSHResource.closeAllResource()来关闭所有资源。
+	 * @param ip 主机ip
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param command 要执行的命令
+	 * @return SSHResource 包含Connection, Session, BufferedReader
+	 */
+	public static SSHResource executeWithoutHandleBufferedReader( String ip, String username, String password, String command ) throws SSHException {
+		return SSHUtil.executeWithoutHandleBufferedReader( ip, PORT, username, password, command );
 	}
 
 }

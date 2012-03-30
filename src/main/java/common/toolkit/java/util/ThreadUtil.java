@@ -3,6 +3,7 @@ package common.toolkit.java.util;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import common.toolkit.java.constant.SymbolConstant;
 import common.toolkit.java.exception.IllegalParamException;
 
 /**
@@ -17,10 +18,10 @@ public class ThreadUtil {
 	 * @param threadNum 重复开启的线程个数
 	 * @param sleepTime 启动完所有线程后，休息 ms
 	 */
-	public static void startThread( Runnable runnable, int threadNum, long sleepTime ) {
+	public static void startThread( Runnable runnable, String threadName, int threadNum, long sleepTime ) {
 
 		for ( int i = 0; i < threadNum; i++ ) {
-			Thread thread = new Thread( runnable, "Thread#" + i );
+			Thread thread = new Thread( runnable, SymbolConstant.POUND + StringUtil.defaultIfBlank( threadName, "Thread" ) + SymbolConstant.MINUS_SIGN + i );
 			thread.start();
 		}
 		try {
@@ -28,6 +29,20 @@ public class ThreadUtil {
 		} catch ( InterruptedException e ) {
 		}
 	}
+	
+	
+	
+	/**
+	 * 重复开启 threadNum 个线程来执行 runnable
+	 * @param runnable 可执行任务
+	 * @param threadNum 重复开启的线程个数
+	 * @param sleepTime 启动完所有线程后，休息 ms
+	 */
+	public static void startThread( Runnable runnable, int threadNum, long sleepTime ) {
+		ThreadUtil.startThread( runnable, "Thread", threadNum, sleepTime );
+	}
+	
+	
 
 	/**
 	 * 开启 1 个线程来执行 runnable
@@ -36,6 +51,15 @@ public class ThreadUtil {
 	public static void startThread( Runnable runnable ) {
 		startThread( runnable, 1, 0 );
 	}
+	
+	/**
+	 * 开启 1 个线程来执行 runnable
+	 * @param runnable 可执行任务
+	 */
+	public static void startThread( Runnable runnable, String threadName) {
+		startThread( runnable, StringUtil.trimToEmpty( threadName ), 1, 0 );
+	}
+	
 
 	/**
 	 * 重复开启 threadNum 个线程来执行 runnable

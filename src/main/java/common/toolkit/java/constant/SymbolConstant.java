@@ -29,6 +29,7 @@ public class SymbolConstant {
 	
 	public final static String QUESTION_SIGN = "?";
 	public final static String AND_SIGN = "&";
+	/** # */
 	public final static String POUND = "#";
 	
 	/** $ */

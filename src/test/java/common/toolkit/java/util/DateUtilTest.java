@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -33,8 +35,8 @@ public class DateUtilTest {
 		long expectedTimeMillis23 = 1000 * 60 * 60 * 23;
 		long expectedTimeMillis1  = 1000 * 60 * 60 * 1;
 		
-		int hour = 11;
-		System.out.println( "当前设置的时间是" + hour + ", 例如当前是16:23,那么hour应该设置为:" + 16 );
+		int hour = 13;
+		System.err.println( "当前设置的时间是" + hour + ", 例如当前是16:23,那么hour应该设置为:" + 16 );
 		long timeMillisToAfterDaysHour1 = 0 ;
 		try {
 			timeMillisToAfterDaysHour1 = DateUtil.getTimeMillisToAfterDaysHour( 1, hour );
@@ -51,11 +53,18 @@ public class DateUtilTest {
 		}
 		assertTrue( 0 <= timeMillisToAfterDaysHour0 && timeMillisToAfterDaysHour0 <= expectedTimeMillis1  );
 		
-		
-		
-		
-		
-		
 	}
+	
+	@Test
+	public void getDaysBefore(  ){
+		List<String> dates = new ArrayList< String >();
+		dates.add( "2012-03-29" );
+		dates.add( "2012-03-28" );
+		
+		System.err.println( "当前dates中设置的时间" + dates + ", 例如当前是2012-03-30,那么hour应该设置为:2012-03-29,2012-03-28" );
+		
+		assertEquals( dates, DateUtil.getDaysBefore( 2 ) );
+	}
+	
 	
 }
