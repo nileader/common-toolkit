@@ -315,18 +315,9 @@ public class StringUtil {
 		return StringUtil.trimToEmpty( originalStr ).replace( regex, replacement );
 	}
 	
-	/**
-	 * Description: Replaces last substring of this string that matches the
-	 * given regular expression with the given replacement.<br>
-	 * Do not worry about null pointer
-	 * @param @param regex
-	 * @param @param replacement
-	 * @return String
-	 * @throws
-	 */
 	public static String replaceAll( String originalStr, String replacement, String... regexArray ) {
 		
-		if( StringUtil.isBlank( regexArray ) || 0 == regexArray.length )
+		if( 0 == regexArray.length )
 			return originalStr;
 		
 		for( String regex : regexArray){

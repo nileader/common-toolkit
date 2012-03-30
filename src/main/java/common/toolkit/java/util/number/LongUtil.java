@@ -33,6 +33,11 @@ public class LongUtil {
 		return originalLong;
 	}
 	
+	/** 是否为0 */
+	public static boolean isZero( long originalLong ) {
+		return 0 == originalLong;
+	}
+	
 	public static long maxIfTooBig ( long originalLong, long maxLong ) {
 		if ( originalLong >= maxLong) {
 			originalLong = maxLong;

@@ -3,13 +3,16 @@ package common.toolkit.java.util;
 import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import common.toolkit.java.constant.BaseConstant;
 import common.toolkit.java.constant.EmptyObjectConstant;
 import common.toolkit.java.entity.DateFormat;
+import common.toolkit.java.util.collection.CollectionUtil;
 
 /**
  * Description: String util class.
@@ -24,15 +27,25 @@ public class DateUtil {
 	 * 
 	 * @return like format yyyy-MM-dd HH:mm:ss.
 	 */
-	public static String convertDate2String( Date date ) {
+	public static String convertDate2String( Date date, DateFormat dateFormat ) {
 		if ( null == date )
 			return EMPTY_STRING;
 		long seconds = date.getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+		SimpleDateFormat sdf = new SimpleDateFormat( dateFormat.getFormat() );
 		Date dt = new Date( seconds );
 		String dateString = sdf.format( dt );
 		return StringUtil.trimToEmpty( dateString );
 	}
+	
+	/**
+	 * Convert java.util.Date to String<br>
+	 * 
+	 * @return like format yyyy-MM-dd HH:mm:ss.
+	 */
+	public static String convertDate2String( Date date ) {
+		return DateUtil.convertDate2String( date, DateFormat.DateTime );
+	}
+	
 	
 	/**
 	 * @return a formated date:"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"
@@ -136,8 +149,24 @@ public class DateUtil {
 	
 	
 	
-	
-	
+	/**
+	 * Get days before:<br>
+	 * today: 2012-03-29, days: 2, then return [2012-03-28,2012-03-27]
+	 * */
+	public static List<String> getDaysBefore( int days ){
+		
+		if( 0 == days )
+			return CollectionUtil.emptyList();
+		
+		List<String> daysBeforeList = new ArrayList< String >();
+		
+		for( int i = 1; i <= days; i++ ){
+			Date date = new Date( System.currentTimeMillis() - i * BaseConstant.MILLISECONDS_OF_ONE_DAY  );
+			daysBeforeList.add( DateUtil.convertDate2String( date, DateFormat.Date ) );
+		}
+		return daysBeforeList;
+		
+	}
 	
 	
 	
