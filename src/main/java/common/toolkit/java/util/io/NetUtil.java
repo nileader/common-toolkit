@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,12 +13,14 @@ import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import common.toolkit.java.constant.RegExpConstant;
 import common.toolkit.java.util.StringUtil;
+import common.toolkit.java.util.number.IntegerUtil;
 
 /**
  * 类说明: 网络机关工具类
@@ -25,6 +29,8 @@ import common.toolkit.java.util.StringUtil;
 public class NetUtil {
 
 	public static final Pattern PATTERN_OF_IP = Pattern.compile( RegExpConstant.REG_EXP_OF_IP );
+
+	public static final int DEFAULT_CONNECTION_TIMEOUT = 3000;
 
 	/**
 	 * 检测是否是合法的端口.
@@ -92,7 +98,9 @@ public class NetUtil {
 		}
 	}
 
-	public static String getContentOfUrl( String url ) throws HttpException, IOException {
+	public static String getContentOfUrl( String url, int connectionTimeout ) throws HttpException, IOException {
+
+		connectionTimeout = IntegerUtil.defaultIfZero( connectionTimeout, DEFAULT_CONNECTION_TIMEOUT );
 		// 构造HttpClient的实例
 		HttpClient httpClient = new HttpClient();
 		// 创建GET方法的实例
@@ -101,7 +109,7 @@ public class NetUtil {
 		getMethod.getParams().setParameter( HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler() );
 		HttpConnectionManagerParams managerParams = httpClient.getHttpConnectionManager().getParams();
 		// 设置连接超时时间(单位毫秒)
-		managerParams.setConnectionTimeout( 3000 );
+		managerParams.setConnectionTimeout( connectionTimeout );
 		// 设置读数据超时时间(单位毫秒)
 		managerParams.setSoTimeout( 20000 );
 		try {
@@ -110,14 +118,72 @@ public class NetUtil {
 			if ( statusCode != HttpStatus.SC_OK ) {
 				System.err.println( "Method failed: " + getMethod.getStatusLine() );
 			}
-			// 读取内容
-			byte[] responseBody = getMethod.getResponseBody();
-			// 处理内容
-			return new String( responseBody );
+
+			return IOUtil.convertInputStream2String( getMethod.getResponseBodyAsStream(), getMethod.getResponseCharSet() );
 		} finally {
 			// 释放连接
 			getMethod.releaseConnection();
 		}
 	}
+
+	public static Map<String,String> getContentOfUrl( Map<String,String> urls, int connectionTimeout ) throws HttpException, IOException {
+
+		Map<String,String> bodyContents = new HashMap< String,String >();
+		
+		connectionTimeout = IntegerUtil.defaultIfZero( connectionTimeout, DEFAULT_CONNECTION_TIMEOUT );
+		// 构造HttpClient的实例
+		HttpClient httpClient = new HttpClient();
+		// 创建GET方法的实例
+		GetMethod getMethod = new GetMethod();
+		// 使用系统提供的默认的恢复策略
+		getMethod.getParams().setParameter( HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler() );
+		HttpConnectionManagerParams managerParams = httpClient.getHttpConnectionManager().getParams();
+		// 设置连接超时时间(单位毫秒)
+		managerParams.setConnectionTimeout( connectionTimeout );
+		// 设置读数据超时时间(单位毫秒)
+		managerParams.setSoTimeout( 20000 );
+		try {
+			for( String key : urls.keySet() ){
+				if( StringUtil.isBlank( key ) )
+					continue;
+				String url = urls.get( key );
+				if( StringUtil.isBlank( url ) )
+					continue;
+				getMethod.setURI( new URI( StringUtil.trimToEmpty( url ), true, "UTF-8") );
+				try {
+					// 执行getMethod
+					int statusCode = httpClient.executeMethod( getMethod );
+					if ( statusCode != HttpStatus.SC_OK ) {
+						System.err.println( "Method failed: " + getMethod.getStatusLine() );
+					}
+					String content = IOUtil.convertInputStream2String( getMethod.getResponseBodyAsStream(), getMethod.getResponseCharSet() );
+					bodyContents.put( key, content );
+					System.out.println( content );
+				} catch ( Throwable e ) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			return bodyContents;
+			
+		} finally {
+			// 释放连接
+			getMethod.releaseConnection();
+		}
+	}
+	
+	public static String getContentOfUrl( String url ) throws HttpException, IOException {
+		return NetUtil.getContentOfUrl( url, DEFAULT_CONNECTION_TIMEOUT );
+	}
+	
+	
+	public static Map<String,String> getContentOfUrl( Map<String,String> urls ) throws HttpException, IOException {
+
+		return NetUtil.getContentOfUrl( urls, DEFAULT_CONNECTION_TIMEOUT );
+	}
+	
+	
+	
 
 }

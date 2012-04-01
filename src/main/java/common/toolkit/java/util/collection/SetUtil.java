@@ -1,6 +1,8 @@
 package common.toolkit.java.util.collection;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import common.toolkit.java.constant.SymbolConstant;
@@ -12,6 +14,16 @@ import common.toolkit.java.util.StringUtil;
  */
 public class SetUtil {
 
+	
+	public static <T> Set< T > convertToSet( List< T > collection ) {
+		if ( CollectionUtil.isBlank( collection ) )
+			return CollectionUtil.emptySet();
+		return new HashSet< T >( collection );
+	}
+	
+	
+	
+	
 	/**
 	 * parse the string to Set
 	 * @param @param originalStr abc, def,helloword,myname

@@ -32,23 +32,6 @@ public class CollectionUtil extends ObjectUtil {
 		return false;
 	}
 
-	
-	
-	public static <T> List< T > reverseList( List< T > collection ){
-		
-		if( CollectionUtil.isBlank( collection ) )
-			return collection;
-		
-		List< T > collectionNew = new ArrayList< T >();
-		
-		for( int i = collection.size() - 1; i >= 0; i-- ){
-			collectionNew.add( collection.get( i ) );
-		}
-		return collectionNew;
-		
-	}
-	
-	
 	/**
 	 * Convert Collection< String > to String, 并且使用split来分隔，不含空格。
 	 * @param split 需要分隔的字符

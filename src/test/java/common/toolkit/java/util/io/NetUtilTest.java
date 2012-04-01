@@ -3,6 +3,11 @@ package common.toolkit.java.util.io;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.httpclient.HttpException;
 import org.junit.Test;
 
 /**
@@ -23,6 +28,17 @@ public class NetUtilTest {
 		assertTrue( NetUtil.isLegalIP( "127.0.0.1" ) );
 		assertFalse( NetUtil.isLegalIP( "1.2.011.25" ) );
 		assertFalse( NetUtil.isLegalIP( "1.2.11.256" ) );
+	}
+	
+	@Test
+	public void testGetContentOfUrl() throws HttpException, IOException{
+		Map<String,String> map = new HashMap< String,String >();
+		
+		map.put( "taobao","http://www.taobao.com" );
+		map.put( "baidu","http://www.baidu.com" );
+		map.put( "qq","http://www.qq.com" );
+		
+		System.out.println( NetUtil.getContentOfUrl( map, 5000 ) );
 	}
 	
 	
