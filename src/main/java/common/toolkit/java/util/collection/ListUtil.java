@@ -3,6 +3,7 @@ package common.toolkit.java.util.collection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import common.toolkit.java.constant.EmptyObjectConstant;
 import common.toolkit.java.constant.SymbolConstant;
@@ -16,6 +17,13 @@ import common.toolkit.java.util.number.NumberUtil;
  */
 public class ListUtil {
 
+	
+	public static <T> List< T > convertToList( Set< T > collection ) {
+		if ( CollectionUtil.isBlank( collection ) )
+			return CollectionUtil.emptyList();
+		return new ArrayList< T >( collection );
+	}
+	
 	/**
 	 * 把一个字符串转换成List
 	 * @param @param originalStr abc, def,helloword,myname
@@ -29,27 +37,37 @@ public class ListUtil {
 		return ArrayUtil.toArrayList( originalStr.split( splitStr ) );
 	}
 
+	public static <T> List< T > reverseList( List< T > collection ) {
+
+		if ( CollectionUtil.isBlank( collection ) )
+			return collection;
+		List< T > collectionNew = new ArrayList< T >();
+		for ( int i = collection.size() - 1; i >= 0; i-- ) {
+			collectionNew.add( collection.get( i ) );
+		}
+		return collectionNew;
+	}
+
 	/**
 	 * Return the sublist of list.<br>
 	 * Note:No worry of java.lang.StringIndexOutOfBoundsException
-	 * @param list	original
+	 * @param list original
 	 * @param fromIndex
 	 * @param size
 	 * @return
 	 */
 	public static <T> List< T > subList( List< T > list, int fromIndex, int size ) {
-		
-		if( CollectionUtil.isBlank( list ) )
+
+		if ( CollectionUtil.isBlank( list ) )
 			return CollectionUtil.emptyList();
-		if( NumberUtil.isNegative( fromIndex, size ) ){
+		if ( NumberUtil.isNegative( fromIndex, size ) ) {
 			return CollectionUtil.emptyList();
 		}
-		
+
 		int endIndex = IntegerUtil.maxIfTooBig( fromIndex + size, list.size() );
 		return list.subList( fromIndex, endIndex );
 	}
-	
-	
+
 	/**
 	 * Convert Collection< String > to String, 并且使用split来分隔，不含空格。
 	 * @param split 需要分隔的字符
@@ -76,6 +94,5 @@ public class ListUtil {
 	public static String toString( Collection< String > collection ) {
 		return toString( collection, SymbolConstant.COMMA );
 	}
-	
 
 }

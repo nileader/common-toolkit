@@ -15,6 +15,9 @@ public class SymbolConstant {
 	/**:*/
 	public final static String COLON    = ":"; 
 
+	/** ; */
+	public final static String SEMICOLON = ";";
+	
 	/**[*/
 	public final static String SQUARE_BRACKETS_LEFT       = "[";
 	/**]*/
