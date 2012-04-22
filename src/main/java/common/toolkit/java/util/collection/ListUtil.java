@@ -24,6 +24,17 @@ public class ListUtil {
 		return new ArrayList< T >( collection );
 	}
 	
+	
+	/**
+	 * 把一个字符串转换成List
+	 * @param originalStr abc, def,helloword,myname
+	 * @param splitStr ,
+	 * @return List<String>
+	 */
+	public static List< String > parseList( String originalStr ) {
+		return ListUtil.parseList( originalStr, SymbolConstant.COMMA );
+	}
+	
 	/**
 	 * 把一个字符串转换成List
 	 * @param @param originalStr abc, def,helloword,myname

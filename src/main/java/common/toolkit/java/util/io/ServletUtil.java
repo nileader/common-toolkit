@@ -118,6 +118,19 @@ public class ServletUtil {
 		}
 		return encodeURL.toString();
 	}
+	
+	
+	
+	
+	/**
+	 * Get ip where request from
+	 */
+	public static String getRequestRemoteAddr( HttpServletRequest request ) {
+		String forwordIp = request.getHeader("X-Forwarded-For");
+        return StringUtil.isBlank( forwordIp ) ? request.getRemoteAddr() : forwordIp;
+	}
+	
+	
 
 	/**
 	 * 获取一个请求的资源名(URI)。适用于POST和GET 方式请求,不包含querystring或其它参数<br>
