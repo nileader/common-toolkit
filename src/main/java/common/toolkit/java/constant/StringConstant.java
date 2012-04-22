@@ -5,4 +5,5 @@ package common.toolkit.java.constant;
  * @author 银时 yinshi.nc@taobao.com
  */
 public class StringConstant {
+	
 }

@@ -1,5 +1,6 @@
 package common.toolkit.java.util.number;
 
+import common.toolkit.java.util.ObjectUtil;
 import common.toolkit.java.util.StringUtil;
 
 /**
@@ -8,6 +9,15 @@ import common.toolkit.java.util.StringUtil;
  * @Date Jan 12, 2012
  */
 public class DoubleUtil {
+
+	/**
+	 * 将String转换成double类型<br>
+	 * 放心，这个方法不会抛出任何异常，如果不是合法的转换，会返回0d.
+	 * @return
+	 */
+	public static double compareToBigger( double a, double b ) {
+		return a >= b ? a : b;
+	}
 
 	/**
 	 * 将String转换成double类型<br>
@@ -23,11 +33,20 @@ public class DoubleUtil {
 	}
 
 	/**
+	 * return |a-b|
+	 * */
+	public static double subtractionToPositive( double a, double b ) {
+		return java.lang.Math.abs( a - b );
+	}
+
+	/**
 	 * 确保不会出现异常<br>
 	 * 放心，这个方法不会抛出任何异常，如果不是合法的转换，会返回0d.
 	 * @return double
 	 */
 	public static double trimToZero( Object o ) {
+		if ( ObjectUtil.isBlank( o ) )
+			return 0;
 		if ( o instanceof String ) {
 			return DoubleUtil.parseDouble( ( String ) o );
 		} else if ( o instanceof Integer ) {

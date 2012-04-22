@@ -34,6 +34,8 @@ public class SymbolConstant {
 	public final static String AND_SIGN = "&";
 	/** # */
 	public final static String POUND = "#";
+	/** * */
+	public final static String ASTERISK = "*";
 	
 	/** $ */
 	public final static String DOLLAR_SIGN = "$";
@@ -41,7 +43,7 @@ public class SymbolConstant {
 	public final static String ELLIPSIS_THREE = "...";
 	public final static String ELLIPSIS_SIX   = "......";
 	
-	
+	/** = */
 	public final static String EQUAL_SIGN = "=";
 	/**-*/
 	public final static String MINUS_SIGN = "-";
