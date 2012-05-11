@@ -79,6 +79,16 @@ public class ListUtil {
 		return list.subList( fromIndex, endIndex );
 	}
 
+	
+	
+	public static <T> ArrayList< T > trimToEmpty( List< T > collection ) {
+		if ( CollectionUtil.isBlank( collection ) )
+			return new ArrayList< T >();
+		return new ArrayList< T >( collection );
+	}
+	
+	
+	
 	/**
 	 * Convert Collection< String > to String, 并且使用split来分隔，不含空格。
 	 * @param split 需要分隔的字符

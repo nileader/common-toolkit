@@ -51,26 +51,30 @@ public class DateUtil {
 	 * @return a formated date:"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"
 	 */
 	public static String getNowTime( DateFormat dateFormat ) {
-
-		String format = EmptyObjectConstant.EMPTY_STRING;
-
-		switch (dateFormat) {
-		case DateTime: {
-			format = DateFormat.DateTime.getFormat();
-			break;
-		}
-		case Date: {
-			format = DateFormat.Date.getFormat();
-			break;
-		}
-		default:
-			format = DateFormat.Date.getFormat();
-		}
-		SimpleDateFormat sdf = new SimpleDateFormat( StringUtil.defaultIfBlank( format, DateFormat.Date.getFormat() ) );
+		return DateUtil.getNowTime( dateFormat.getFormat() );
+	}
+	
+	
+	/**
+	 * @return a formated date:"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"
+	 */
+	public static String getNowTime( String dateFormat ) {
+		SimpleDateFormat sdf = new SimpleDateFormat( StringUtil.defaultIfBlank( dateFormat, DateFormat.Date.getFormat() ) );
 		Date dt = new Date();
 		String dateString = sdf.format( dt );
 		return StringUtil.trimToEmpty( dateString );
 	}
+	
+	/**
+	 * @return a formated date:"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"
+	 */
+	public static String getNowTime( String dateFormat, long dateLong ) {
+		SimpleDateFormat sdf = new SimpleDateFormat( StringUtil.defaultIfBlank( dateFormat, DateFormat.Date.getFormat() ) );
+		Date dt = new Date( dateLong );
+		String dateString = sdf.format( dt );
+		return StringUtil.trimToEmpty( dateString );
+	}
+	
 	
 	
 	/**
