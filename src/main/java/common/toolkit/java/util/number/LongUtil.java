@@ -26,6 +26,16 @@ public class LongUtil {
 		}
 	}
 	
+	public static long defaultIfError( String originalStr, long defaultLong ) {
+
+		try {
+			return Long.parseLong( StringUtil.trimToEmpty( originalStr ) );
+		} catch ( Exception e ) {
+			return defaultLong;
+		}
+	}
+	
+	
 	public static long defaultIfNotPositive ( long originalLong, long defaultLong ) {
 		if ( 0 >= originalLong ) {
 			return defaultLong;
