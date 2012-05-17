@@ -2,9 +2,9 @@ package common.toolkit.java.util.collection;
 
 import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +69,24 @@ public class CollectionUtil extends ObjectUtil {
 
 	public static final <T> List< T > emptyList() {
 		return Collections.emptyList();
+	}
+
+	public static Map< String, Integer > frequency( Collection< String > collection ) {
+
+		Map< String, Integer > map = new HashMap< String, Integer >();
+
+		if ( CollectionUtil.isBlank( collection ) ) {
+			return map;
+		}
+		for ( String key : collection ) {
+			key = StringUtil.trimToEmpty( key );
+			if ( map.containsKey( key ) ) {
+				map.put( key, map.get( key ) + 1 );
+			} else {
+				map.put( key, 1 );
+			}
+		}
+		return map;
 	}
 
 }
