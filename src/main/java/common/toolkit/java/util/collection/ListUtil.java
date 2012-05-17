@@ -115,5 +115,5 @@ public class ListUtil {
 	public static String toString( Collection< String > collection ) {
 		return toString( collection, SymbolConstant.COMMA );
 	}
-
+	
 }
