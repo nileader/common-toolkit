@@ -1,4 +1,4 @@
-The file is encoded by UTF-8
+The project is encoded by UTF-8
 1. Before commit, please check the following.
    common-toolkit
        |__pom.xml（repository.snapshots.url和repository.releases.url）

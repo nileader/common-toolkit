@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,8 +20,11 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
+import common.toolkit.java.constant.EmptyObjectConstant;
 import common.toolkit.java.constant.RegExpConstant;
+import common.toolkit.java.constant.SymbolConstant;
 import common.toolkit.java.util.StringUtil;
+import common.toolkit.java.util.collection.CollectionUtil;
 import common.toolkit.java.util.number.IntegerUtil;
 
 /**
@@ -126,10 +131,10 @@ public class NetUtil {
 		}
 	}
 
-	public static Map<String,String> getContentOfUrl( Map<String,String> urls, int connectionTimeout ) throws HttpException, IOException {
+	public static Map< String, String > getContentOfUrl( Map< String, String > urls, int connectionTimeout ) throws HttpException, IOException {
 
-		Map<String,String> bodyContents = new HashMap< String,String >();
-		
+		Map< String, String > bodyContents = new HashMap< String, String >();
+
 		connectionTimeout = IntegerUtil.defaultIfZero( connectionTimeout, DEFAULT_CONNECTION_TIMEOUT );
 		// 构造HttpClient的实例
 		HttpClient httpClient = new HttpClient();
@@ -143,13 +148,13 @@ public class NetUtil {
 		// 设置读数据超时时间(单位毫秒)
 		managerParams.setSoTimeout( 20000 );
 		try {
-			for( String key : urls.keySet() ){
-				if( StringUtil.isBlank( key ) )
+			for ( String key : urls.keySet() ) {
+				if ( StringUtil.isBlank( key ) )
 					continue;
 				String url = urls.get( key );
-				if( StringUtil.isBlank( url ) )
+				if ( StringUtil.isBlank( url ) )
 					continue;
-				getMethod.setURI( new URI( StringUtil.trimToEmpty( url ), true, "UTF-8") );
+				getMethod.setURI( new URI( StringUtil.trimToEmpty( url ), true, "UTF-8" ) );
 				try {
 					// 执行getMethod
 					int statusCode = httpClient.executeMethod( getMethod );
@@ -164,26 +169,61 @@ public class NetUtil {
 					e.printStackTrace();
 				}
 			}
-			
+
 			return bodyContents;
-			
+
 		} finally {
 			// 释放连接
 			getMethod.releaseConnection();
 		}
 	}
-	
+
 	public static String getContentOfUrl( String url ) throws HttpException, IOException {
 		return NetUtil.getContentOfUrl( url, DEFAULT_CONNECTION_TIMEOUT );
 	}
-	
-	
-	public static Map<String,String> getContentOfUrl( Map<String,String> urls ) throws HttpException, IOException {
+
+	public static Map< String, String > getContentOfUrl( Map< String, String > urls ) throws HttpException, IOException {
 
 		return NetUtil.getContentOfUrl( urls, DEFAULT_CONNECTION_TIMEOUT );
 	}
-	
-	
-	
+
+	/**
+	 * 192.168.37.111:51472 -> 192.168.37.111
+	 * @param server 192.168.37.111:51472
+	 * @return
+	 */
+	public static String getIpFromServer( String server ) {
+
+		if ( StringUtil.isBlank( server ) ) {
+			return EmptyObjectConstant.EMPTY_STRING;
+		}
+		try {
+			return StringUtil.splitWithLeastLength( server, SymbolConstant.COLON, 1 )[0];
+		} catch ( Exception e ) {
+			return EmptyObjectConstant.EMPTY_STRING;
+		}
+	}
+
+	/**
+	 * 192.168.37.111:51472 -> 192.168.37.111
+	 * @param server 192.168.37.111:51472
+	 * @return
+	 */
+	public static List< String > getIpFromServer( List< String > serverList ) {
+
+		List< String > ipList = new ArrayList< String >();
+
+		if ( CollectionUtil.isBlank( serverList ) ) {
+			return ipList;
+		}
+
+		for ( String server : serverList ) {
+			String ip = NetUtil.getIpFromServer( StringUtil.trimToEmpty( server ) );
+			if ( StringUtil.isBlank( ip ) )
+				continue;
+			ipList.add( ip );
+		}
+		return ipList;
+	}
 
 }
