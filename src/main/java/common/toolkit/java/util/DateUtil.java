@@ -174,6 +174,28 @@ public class DateUtil {
 	
 	
 	
+	/**
+	 * Get yesterday<br>
+	 * @param 2012-05-15
+	 * @return 2012-05-14
+	 * */
+	public static String getYesterday( String date ){
+		date = StringUtil.defaultIfBlank( date, DateUtil.getNowTime( DateFormat.Date ) );
+		SimpleDateFormat  df = new java.text.SimpleDateFormat( "yyyy-MM-dd");
+		Date dateNow;
+		try {
+			dateNow = df.parse( date );
+		} catch ( Throwable e ) {
+			return DateUtil.getYesterdayTime( DateFormat.Date );
+		}
+		return DateUtil.getNowTime( "yyyy-MM-dd", dateNow.getTime() - 24*60*60*1000 );
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 

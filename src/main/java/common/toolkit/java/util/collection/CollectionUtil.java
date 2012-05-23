@@ -2,9 +2,11 @@ package common.toolkit.java.util.collection;
 
 import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +73,7 @@ public class CollectionUtil extends ObjectUtil {
 		return Collections.emptyList();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Map< String, Integer > frequency( Collection< String > collection ) {
 
 		Map< String, Integer > map = new HashMap< String, Integer >();
@@ -86,7 +89,31 @@ public class CollectionUtil extends ObjectUtil {
 				map.put( key, 1 );
 			}
 		}
-		return map;
-	}
 
+		return MapUtil.sortByValue( map );
+	}
+	
+	
+	/**
+	 * Returns a new java.util.Collection containing a - b. The cardinality of each element e in the returned java.util.Collection will be the cardinality of e in a minus the cardinality of e in b, or zero, whichever is greater.
+	 * @param a the collection to subtract from, must not be null
+	 * @param b the collection to subtract, must not be null
+	 * @return a new collection with the results
+	 */
+	public static <T> Collection< T > subtract( final Collection< T > a, final Collection< T > b ) {
+		
+		if( CollectionUtil.isBlank( a ) ){
+			return new ArrayList< T >();
+		}
+		if( CollectionUtil.isBlank( b ) ){
+			return a;
+		}
+		
+		Collection< T > list = new ArrayList< T >( a );
+		for ( Iterator< T > it = b.iterator(); it.hasNext(); ) {
+			list.remove( it.next() );
+		}
+		return list;
+	}
+	
 }

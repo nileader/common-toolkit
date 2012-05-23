@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class StatisticsUtil {
 
-	private static Log log = LogFactory.getLog( StatisticsUtil.class );
+	private static Log log = LogFactory.getLog( "commonStat" );
 	
 
 	public static boolean NEED_STAT = false;
