@@ -2,7 +2,9 @@ package common.toolkit.java.util.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import common.toolkit.java.constant.EmptyObjectConstant;
@@ -17,14 +19,12 @@ import common.toolkit.java.util.number.NumberUtil;
  */
 public class ListUtil {
 
-	
 	public static <T> List< T > convertToList( Set< T > collection ) {
 		if ( CollectionUtil.isBlank( collection ) )
 			return CollectionUtil.emptyList();
 		return new ArrayList< T >( collection );
 	}
-	
-	
+
 	/**
 	 * 把一个字符串转换成List
 	 * @param originalStr abc, def,helloword,myname
@@ -34,7 +34,7 @@ public class ListUtil {
 	public static List< String > parseList( String originalStr ) {
 		return ListUtil.parseList( originalStr, SymbolConstant.COMMA );
 	}
-	
+
 	/**
 	 * 把一个字符串转换成List
 	 * @param @param originalStr abc, def,helloword,myname
@@ -79,16 +79,12 @@ public class ListUtil {
 		return list.subList( fromIndex, endIndex );
 	}
 
-	
-	
 	public static <T> ArrayList< T > trimToEmpty( List< T > collection ) {
 		if ( CollectionUtil.isBlank( collection ) )
 			return new ArrayList< T >();
 		return new ArrayList< T >( collection );
 	}
-	
-	
-	
+
 	/**
 	 * Convert Collection< String > to String, 并且使用split来分隔，不含空格。
 	 * @param split 需要分隔的字符
@@ -115,5 +111,61 @@ public class ListUtil {
 	public static String toString( Collection< String > collection ) {
 		return toString( collection, SymbolConstant.COMMA );
 	}
-	
+
+	/**
+	 * split a big list to some small list.
+	 * @param list
+	 * @param size sublist size.
+	 * @return
+	 */
+	public static <T> Map< Integer, List< T > > split( List< T > list, int size ) {
+		size = IntegerUtil.defaultIfNotPositive( size, 100 );
+		Map< Integer, List< T > > map = new HashMap< Integer, List< T > >();
+		if ( CollectionUtil.isBlank( list ) )
+			return map;
+		if ( list.size() <= size ) {
+			map.put( 1, list );
+			return map;
+		}
+		int i = 0;
+		int j = 0;
+		List< T > subList = new ArrayList< T >();
+		for ( T t : list ) {
+			subList.add( t );
+			if ( ++j >= size ) {
+				map.put( ++i, subList );
+				j = 0;
+				subList = new ArrayList< T >();
+			}
+		}
+
+		if ( !CollectionUtil.isBlank( subList ) ) {
+			map.put( ++i, subList );
+		}
+
+		return map;
+	}
+
+	public static Map< String, List< String > > diff( List< String > list1, List< String > list2 ) {
+
+		Map< String, List< String > > diffMap = new HashMap< String, List< String > >();
+		List< String > list1Have = new ArrayList< String >();
+		List< String > bothHave = new ArrayList< String >();
+		List< String > list2Have = new ArrayList< String >();
+
+		if ( !CollectionUtil.isBlank( list1 ) && CollectionUtil.isBlank( list2 ) ) {
+			list1Have = list1;
+		} else if ( CollectionUtil.isBlank( list1 ) && !CollectionUtil.isBlank( list2 ) ) {
+			list2Have = list2;
+		} else if ( !CollectionUtil.isBlank( list1 ) && !CollectionUtil.isBlank( list2 ) ) {
+			list1Have = ( List< String > ) CollectionUtil.subtract( list1, list2 );
+			list2Have = ( List< String > ) CollectionUtil.subtract( list2, list1 );
+			bothHave = ( List< String > ) CollectionUtil.subtract( list1, list1Have );
+		}
+		diffMap.put( "list1Have", list1Have );
+		diffMap.put( "bothHave", bothHave );
+		diffMap.put( "list2Have", list2Have );
+		return diffMap;
+	}
+
 }

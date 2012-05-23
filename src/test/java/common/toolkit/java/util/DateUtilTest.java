@@ -4,21 +4,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 
+import common.toolkit.java.entity.DateFormat;
+
 /**
  * 
  * Description:
- * @author   银时：yinshi.nc / yinshi.nc@taobao.com
- * @Date	 Jan 9, 2012
+ * @author 银时：yinshi.nc / yinshi.nc@taobao.com
+ * @Date Jan 9, 2012
  */
 public class DateUtilTest {
 
-	
 	@Test
 	public void convertDate2String() {
 		@SuppressWarnings("deprecation")
@@ -27,44 +29,59 @@ public class DateUtilTest {
 
 		assertEquals( "2011-08-21 19:40:35", dateFormat );
 	}
-	
+
 	@Test
-	public void getTimeMillisToAfterDaysHour(){
-		
+	public void getTimeMillisToAfterDaysHour() {
+
 		long expectedTimeMillis24 = 1000 * 60 * 60 * 24;
 		long expectedTimeMillis23 = 1000 * 60 * 60 * 23;
-		long expectedTimeMillis1  = 1000 * 60 * 60 * 1;
-		
-		int hour = 13;
+		long expectedTimeMillis1 = 1000 * 60 * 60 * 1;
+
+		int hour = 11;
 		System.err.println( "当前设置的时间是" + hour + ", 例如当前是16:23,那么hour应该设置为:" + 16 );
-		long timeMillisToAfterDaysHour1 = 0 ;
+		long timeMillisToAfterDaysHour1 = 0;
 		try {
 			timeMillisToAfterDaysHour1 = DateUtil.getTimeMillisToAfterDaysHour( 1, hour );
 		} catch ( Exception e ) {
 			fail( "不应该执行我，注意修改本方法的hour" );
 		}
-		assertTrue( expectedTimeMillis23 <= timeMillisToAfterDaysHour1 && timeMillisToAfterDaysHour1 <= expectedTimeMillis24  );
-		
-		long timeMillisToAfterDaysHour0 = 0 ;
+		assertTrue( expectedTimeMillis23 <= timeMillisToAfterDaysHour1 && timeMillisToAfterDaysHour1 <= expectedTimeMillis24 );
+
+		long timeMillisToAfterDaysHour0 = 0;
 		try {
-			timeMillisToAfterDaysHour0 = DateUtil.getTimeMillisToAfterDaysHour( 0, hour+1 );
+			timeMillisToAfterDaysHour0 = DateUtil.getTimeMillisToAfterDaysHour( 0, hour + 1 );
 		} catch ( Exception e ) {
 			fail( "不应该执行我，注意修改本方法的hour" );
 		}
-		assertTrue( 0 <= timeMillisToAfterDaysHour0 && timeMillisToAfterDaysHour0 <= expectedTimeMillis1  );
-		
+		assertTrue( 0 <= timeMillisToAfterDaysHour0 && timeMillisToAfterDaysHour0 <= expectedTimeMillis1 );
+
 	}
-	
+
 	@Test
-	public void getDaysBefore(  ){
-		List<String> dates = new ArrayList< String >();
-		dates.add( "2012-03-29" );
-		dates.add( "2012-03-28" );
-		
+	public void getDaysBefore() {
+		List< String > dates = new ArrayList< String >();
+		dates.add( "2012-05-17" );
+		dates.add( "2012-05-16" );
+
 		System.err.println( "当前dates中设置的时间" + dates + ", 例如当前是2012-03-30,那么hour应该设置为:2012-03-29,2012-03-28" );
-		
+
 		assertEquals( dates, DateUtil.getDaysBefore( 2 ) );
 	}
-	
-	
+
+	@Test
+	public void getYesterday() {
+
+		String date1 = "2012-05-17";
+		String date2 = "2012-04-01";
+		String date3 = "2012-03-01";
+		String date4 = "2012-01-01";
+
+		assertEquals( "2012-05-16", DateUtil.getYesterday( date1 ) );
+		assertEquals( "2012-03-31", DateUtil.getYesterday( date2 ) );
+		assertEquals( "2012-02-29", DateUtil.getYesterday( date3 ) );
+		assertEquals( "2011-12-31", DateUtil.getYesterday( date4 ) );
+		assertEquals( "2012-05-17", DateUtil.getYesterday( "" ) );
+
+	}
+
 }
