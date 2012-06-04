@@ -118,7 +118,7 @@ public class NetUtil {
 		// 璁剧疆杩炴帴瓒呮椂鏃堕棿(鍗曚綅姣)
 		managerParams.setConnectionTimeout( connectionTimeout );
 		// 璁剧疆璇绘暟鎹秴鏃舵椂闂�鍗曚綅姣)
-		managerParams.setSoTimeout( 20000 );
+		managerParams.setSoTimeout( 60000 );
 		try {
 			// 鎵цgetMethod
 			int statusCode = httpClient.executeMethod( getMethod );
@@ -177,7 +177,7 @@ public class NetUtil {
 		// 璁剧疆杩炴帴瓒呮椂鏃堕棿(鍗曚綅姣)
 		managerParams.setConnectionTimeout( connectionTimeout );
 		// 璁剧疆璇绘暟鎹秴鏃舵椂闂�鍗曚綅姣)
-		managerParams.setSoTimeout( 20000 );
+		managerParams.setSoTimeout( 60000 );
 		try {
 			for ( String key : urls.keySet() ) {
 				if ( StringUtil.isBlank( key ) )
