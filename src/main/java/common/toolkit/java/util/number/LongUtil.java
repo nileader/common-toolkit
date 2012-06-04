@@ -17,6 +17,20 @@ public class LongUtil {
 		return originalLong;
 	}
 	
+	public static long defaultIfNull( Long originalLong, long defaultLong ) {
+		if ( null == originalLong ) {
+			return defaultLong;
+		}
+		return originalLong;
+	}
+	
+	public static long defaultIfNull( Long originalLong ) {
+		if ( null == originalLong ) {
+			return 0;
+		}
+		return originalLong;
+	}
+	
 	public static long defaultIfError( String originalStr, Integer defaultLong ) {
 
 		try {

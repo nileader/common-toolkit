@@ -17,7 +17,7 @@ public class NumberUtil {
 	
 	
 	/**
-	 * Check if the number is positive
+	 * Check if the number is Negative:-0.1,-1,-10,...
 	 * @param number
 	 * @return
 	 */
@@ -27,6 +27,19 @@ public class NumberUtil {
 		}
 		return false;
 	}
+	
+	/**
+	 * Check if the number is Negative:0.1,1,10,...
+	 * @param number
+	 * @return
+	 */
+	public static boolean isPositive( Number number ) {
+		if( number.doubleValue() > 0 ){
+			return true;
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * Check if the number is positive
