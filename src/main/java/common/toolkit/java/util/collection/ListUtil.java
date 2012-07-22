@@ -90,14 +90,14 @@ public class ListUtil {
 	 * @param split 需要分隔的字符
 	 * @return String
 	 */
-	public static String toString( Collection< String > collection, String split ) {
+	public static String toString( Collection< ? extends Object > collection, String split ) {
 
 		if ( null == collection || collection.isEmpty() ) {
 			return EmptyObjectConstant.EMPTY_STRING;
 		}
 		String str = EmptyObjectConstant.EMPTY_STRING;
-		for ( String _str : collection ) {
-			str += _str + split;
+		for ( Object object : collection ) {
+			str += object.toString() + split;
 		}
 		str = StringUtil.replaceLast( str, split, EmptyObjectConstant.EMPTY_STRING );
 		return str;
@@ -108,7 +108,7 @@ public class ListUtil {
 	 * @param split 需要分隔的字符
 	 * @return String
 	 */
-	public static String toString( Collection< String > collection ) {
+	public static String toString( Collection< ? extends Object > collection ) {
 		return toString( collection, SymbolConstant.COMMA );
 	}
 

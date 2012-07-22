@@ -4,14 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 
-import common.toolkit.java.entity.DateFormat;
+import common.toolkit.java.exception.IllegalParamException;
 
 /**
  * 
@@ -84,4 +83,20 @@ public class DateUtilTest {
 
 	}
 
+	
+	@Test
+	public void isInAssignHour() throws IllegalParamException{
+		
+		assertTrue( DateUtil.isInAssignHour( 5, 8 ) );
+		assertTrue( !DateUtil.isInAssignHour( 5, 6 ) );
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
