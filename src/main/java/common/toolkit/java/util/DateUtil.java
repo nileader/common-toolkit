@@ -12,6 +12,7 @@ import java.util.List;
 import common.toolkit.java.constant.BaseConstant;
 import common.toolkit.java.constant.EmptyObjectConstant;
 import common.toolkit.java.entity.DateFormat;
+import common.toolkit.java.exception.IllegalParamException;
 import common.toolkit.java.util.collection.CollectionUtil;
 
 /**
@@ -192,7 +193,16 @@ public class DateUtil {
 	}
 	
 	
-	
+	public static boolean isInAssignHour( int start, int end ) throws IllegalParamException{
+		
+		Calendar cal = Calendar.getInstance();
+		  int hour = cal.get(Calendar.HOUR_OF_DAY);
+		  
+		  if( start > end ){
+			  throw new IllegalParamException();
+		  }
+		  return (hour >= start && hour <= end );
+	}
 	
 	
 	

@@ -74,9 +74,9 @@ public class CollectionUtil extends ObjectUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map< String, Integer > frequency( Collection< String > collection ) {
+	public static Map< String, Long > frequency( Collection< String > collection ) {
 
-		Map< String, Integer > map = new HashMap< String, Integer >();
+		Map< String, Long > map = new HashMap< String, Long >();
 
 		if ( CollectionUtil.isBlank( collection ) ) {
 			return map;
@@ -86,7 +86,7 @@ public class CollectionUtil extends ObjectUtil {
 			if ( map.containsKey( key ) ) {
 				map.put( key, map.get( key ) + 1 );
 			} else {
-				map.put( key, 1 );
+				map.put( key, 1l );
 			}
 		}
 

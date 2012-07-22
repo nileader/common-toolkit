@@ -58,6 +58,11 @@ public class LongUtil {
 	}
 	
 	/** 是否为0 */
+	public static boolean isBlank( Long originalLong ) {
+		return (null == originalLong || 0 == originalLong);
+	}
+	
+	/** 是否为0 */
 	public static boolean isZero( long originalLong ) {
 		return 0 == originalLong;
 	}
