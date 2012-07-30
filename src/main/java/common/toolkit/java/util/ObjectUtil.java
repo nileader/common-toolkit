@@ -13,6 +13,12 @@ public class ObjectUtil {
 	//用于全局存储
 	public static Map<String, String> GLOBAL_STORE = new HashMap<String, String>();
 	
+	public static Object defaultIfBlank( Object object, Object defaultObject ){
+		if( ObjectUtil.isBlank( object ) )
+			return defaultObject;
+		return object;
+	}
+	
 	/** 是否null*/
 	public static boolean isBlank( Object object ){
 		return null == object;
