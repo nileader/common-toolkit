@@ -15,6 +15,7 @@ import common.toolkit.java.util.number.LongUtil;
 
 /**
  * Map相关的工具类
+ * 
  * @author 银时：yinshi.nc / yinshi.nc@taobao.com
  * @Date Jan 8, 2012
  */
@@ -43,6 +44,7 @@ public class MapUtil extends CollectionUtil {
 
 	/**
 	 * 获取map的大小，放心，这个方法不会发生NPE
+	 * 
 	 * @param map
 	 * @return size of map(0 if null == map)
 	 */
@@ -55,7 +57,9 @@ public class MapUtil extends CollectionUtil {
 
 	/**
 	 * map对象是否为空
-	 * @param map if null == map || map.size == 0
+	 * 
+	 * @param map
+	 *            if null == map || map.size == 0
 	 */
 	public static boolean isBlank( Map< ?, ? > map ) {
 		if ( 0 == MapUtil.size( map ) )
@@ -63,7 +67,7 @@ public class MapUtil extends CollectionUtil {
 		return false;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings( { "rawtypes", "unchecked" } )
 	public static Map sortByValue( Map map ) {
 		List list = new LinkedList( map.entrySet() );
 		Collections.sort( list, new Comparator() {
@@ -82,10 +86,56 @@ public class MapUtil extends CollectionUtil {
 		return result;
 	}
 
-	public static <K, V> HashMap< K, V > trimToEmpty( Map< K, V > collection ) {
+	public static Long sumValue( Map< String, Long > map ) {
+		if ( CollectionUtil.isBlank( map ) ) {
+			return 0l;
+		}
+		Long sum = 0l;
+		for ( Object o : map.keySet() ) {
+			Long value = map.get( o );
+			sum += value;
+		}
+		return sum;
+	}
+
+	public static < K, V > HashMap< K, V > trimToEmpty( Map< K, V > collection ) {
 		if ( CollectionUtil.isBlank( collection ) )
 			return new HashMap< K, V >();
 		return new HashMap< K, V >( collection );
+	}
+
+	
+	/**
+	 * Map -> String
+	 * <pre>
+	 * return [key1:value1,key2:value2]
+	 * </pre>
+	 * @param map
+	 * @return
+	 */
+	public static < K, V > String toString( Map< K, V > map ) {
+		if ( null == map || map.size() == 0 ) {
+			return "[]";
+		}
+		StringBuilder sb = new StringBuilder( "[" );
+		for ( Object o : map.keySet() ) {
+			if ( ObjectUtil.isBlank( o ) )
+				continue;
+			String key = o.toString();
+			Object valueObject = map.get( o );
+			String value = "";
+			if ( !ObjectUtil.isBlank( valueObject ) ) {
+				value = valueObject.toString();
+			}
+			sb.append( key + ":" + value ).append( "," );
+		}
+
+		String str = sb.toString();
+		if ( str.endsWith( "," ) ) {
+			str = StringUtil.replaceLast( str, "", "" );
+		}
+
+		return str + "]";
 	}
 
 }

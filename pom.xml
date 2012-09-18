@@ -141,6 +141,7 @@
 				<groupId>javax.mail</groupId>
 				<artifactId>mail</artifactId>
 				<version>${javamail.version}</version>
+				<scope>provided</scope>
 			</dependency>
 
 
@@ -149,11 +150,13 @@
 				<groupId>com.sdicons.jsontools</groupId>
 				<artifactId>jsontools-core</artifactId>
 				<version>${jsontools.version}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.json</groupId>
 				<artifactId>json</artifactId>
 				<version>${json.version}</version>
+				<scope>provided</scope>
 			</dependency>
 
 
