@@ -12,6 +12,7 @@ import common.toolkit.java.constant.SymbolConstant;
 import common.toolkit.java.util.StringUtil;
 import common.toolkit.java.util.number.IntegerUtil;
 import common.toolkit.java.util.number.NumberUtil;
+import common.toolkit.java.util.number.RandomUtil;
 
 /**
  * 类说明: List相关工具类
@@ -25,6 +26,17 @@ public class ListUtil {
 		return new ArrayList< T >( collection );
 	}
 
+	/**
+	 * Get a random element from collection.
+	 * @param collection
+	 * @return
+	 */
+	public static <T> T getRandomElement( List< T > collection ){
+		if( CollectionUtil.isBlank( collection ) )
+			return null;
+		return collection.get( RandomUtil.getInt( collection.size() ) );
+	}
+	
 	/**
 	 * 把一个字符串转换成List
 	 * @param originalStr abc, def,helloword,myname

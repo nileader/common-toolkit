@@ -15,22 +15,25 @@ import common.toolkit.java.exception.NotExpectedFormatedException;
 
 /**
  * Description: String Utils
- * @author   nileader / nileader@gmail.com
- * @Date	 Feb 10, 2012
+ * 
+ * @author nileader / nileader@gmail.com
+ * @Date Feb 10, 2012
  */
 public class StringUtil {
-	
+
 	/**
 	 * Check String is equals. targetStr compare with compareStrArray, and
 	 * return true if equals one or more
 	 * 
-	 * @param targetStr 待比较的字符串
-	 * @param compareStrArray 要比较的一个或多个字符串标准
+	 * @param targetStr
+	 *            寰呮瘮杈冪殑瀛楃涓�
+	 * @param compareStrArray
+	 *            瑕佹瘮杈冪殑涓�釜鎴栧涓瓧绗︿覆鏍囧噯
 	 * @return
 	 */
 	public static boolean containsIgnoreCase( final String originalStr, final CharSequence targetStr ) {
 
-		if ( null == originalStr ){
+		if ( null == originalStr ) {
 			return false;
 		}
 
@@ -38,9 +41,9 @@ public class StringUtil {
 		String targetStrCaps = targetStr.toString().toUpperCase();
 		return originalStrCaps.contains( targetStrCaps );
 	}
-	
+
 	/**
-	 * Check if string contains ip,此方法不能完全判断ip是否合法
+	 * Check if string contains ip,姝ゆ柟娉曚笉鑳藉畬鍏ㄥ垽鏂璱p鏄惁鍚堟硶
 	 * 
 	 * @return
 	 */
@@ -52,13 +55,15 @@ public class StringUtil {
 		Matcher match = PATTERN_OF_CONTAINS_IP.matcher( originalStr );
 		return match.matches();
 	}
-	
+
 	/**
-	 * Description: Remove {_, -, @, $, #, /, &} in string and make letter after this uppercase.<br>
+	 * Description: Remove {_, -, @, $, #, /, &} in string and make letter after
+	 * this uppercase.<br>
 	 * e.g. ni_lea-der@gmail./com -> niLeaDerGmail.Com
+	 * 
 	 * @param @param inputString
 	 * @param @param firstCharacterUppercase The first letter is need uppercase.
-	 * @return String 
+	 * @return String
 	 * @throws
 	 */
 	public static String convertToCamelCaseString( String inputString, boolean firstCharacterUppercase ) {
@@ -71,7 +76,7 @@ public class StringUtil {
 		for ( int i = 0; i < inputString.length(); i++ ) {
 			char c = inputString.charAt( i );
 
-			switch (c) {
+			switch ( c ) {
 			case '_':
 			case '-':
 			case '@':
@@ -104,14 +109,15 @@ public class StringUtil {
 
 		return sb.toString();
 	}
-	
-	
-	
+
 	/**
 	 * Return Default if originalStr is empty.
-	 * @param originalStr	待确认值
-	 * @param defaultStr	默认值
-	 * @return				如果originalStr为空，那么就返回defaultStr
+	 * 
+	 * @param originalStr
+	 *            寰呯‘璁ゅ�
+	 * @param defaultStr
+	 *            榛樿鍊�
+	 * @return 濡傛灉originalStr涓虹┖锛岄偅涔堝氨杩斿洖defaultStr
 	 */
 	public static String defaultIfBlank( String originalStr, String defaultStr ) {
 		if ( StringUtil.isBlank( originalStr ) ) {
@@ -120,13 +126,15 @@ public class StringUtil {
 		Collections.emptyList();
 		return originalStr;
 	}
-	
+
 	/**
-	 * Check String is equals Ignore Case. targetStr compare with compareStrArray, and
-	 * return true if equals all
+	 * Check String is equals Ignore Case. targetStr compare with
+	 * compareStrArray, and return true if equals all
 	 * 
-	 * @param targetStr 待比较的字符串
-	 * @param compareStrArray 要比较的一个或多个字符串标准
+	 * @param targetStr
+	 *            寰呮瘮杈冪殑瀛楃涓�
+	 * @param compareStrArray
+	 *            瑕佹瘮杈冪殑涓�釜鎴栧涓瓧绗︿覆鏍囧噯
 	 * @return true if targetStr same with every string in compareStrArray
 	 */
 	public static boolean equalsIgnoreCaseAll( String targetStr, String... compareStrArray ) {
@@ -141,14 +149,15 @@ public class StringUtil {
 		}
 		return true;
 	}
-	
-	
+
 	/**
 	 * Check String is equals. targetStr compare with compareStrArray, and
 	 * return true if equals one or more
 	 * 
-	 * @param targetStr 待比较的字符串
-	 * @param compareStrArray 要比较的一个或多个字符串标准
+	 * @param targetStr
+	 *            寰呮瘮杈冪殑瀛楃涓�
+	 * @param compareStrArray
+	 *            瑕佹瘮杈冪殑涓�釜鎴栧涓瓧绗︿覆鏍囧噯
 	 * @return true if targetStr same with string in compareStrArray one at
 	 *         least
 	 */
@@ -164,17 +173,16 @@ public class StringUtil {
 		}
 		return false;
 	}
-	
-	
+
 	/**
-	 * 通过正则表达方式，找出一个字符串中所有指定的子串
+	 * 閫氳繃姝ｅ垯琛ㄨ揪鏂瑰紡锛屾壘鍑轰竴涓瓧绗︿覆涓墍鏈夋寚瀹氱殑瀛愪覆
 	 * 
-	 * @param @param originalStr 字符串
-	 * @param @param regex 待查找子串的正则表达式
-	 * @return List<String> 子串集合
+	 * @param @param originalStr 瀛楃涓�
+	 * @param @param regex 寰呮煡鎵惧瓙涓茬殑姝ｅ垯琛ㄨ揪寮�
+	 * @return List<String> 瀛愪覆闆嗗悎
 	 * 
 	 *         <pre>
-	 * 	对 /1.1.1.1:sid=0x2337c7074dofj02e,37775[1](queued=0,recved=6,sent=7,sid=0x2337c7074f1102e,sdlfjle,dsfe的结果是：
+	 * 	瀵�/1.1.1.1:sid=0x2337c7074dofj02e,37775[1](queued=0,recved=6,sent=7,sid=0x2337c7074f1102e,sdlfjle,dsfe鐨勭粨鏋滄槸锛�
 	 * [sid=0x2337c7074dofj02e, , sid=0x2337c7074f1102e, ]
 	 * </pre>
 	 */
@@ -186,23 +194,22 @@ public class StringUtil {
 		List< String > targetStrList = new ArrayList< String >();
 		final Pattern patternOfTargetStr = Pattern.compile( regex, Pattern.CANON_EQ );
 		final Matcher matcherOfTargetStr = patternOfTargetStr.matcher( originalStr );
-		/** 开始解析 */
+		/** 寮�瑙ｆ瀽 */
 		while ( matcherOfTargetStr.find() ) {
 			targetStrList.add( StringUtil.trimToEmpty( matcherOfTargetStr.group() ) );
 		}
 		return targetStrList;
 	}
 
-
 	/**
-	 * 通过正则表达方式，找出一个字符串中第一个指定的子串
+	 * 閫氳繃姝ｅ垯琛ㄨ揪鏂瑰紡锛屾壘鍑轰竴涓瓧绗︿覆涓涓�釜鎸囧畾鐨勫瓙涓�
 	 * 
-	 * @param @param originalStr 字符串
-	 * @param @param regex 待查找子串的正则表达式
-	 * @return List<String> 子串集合
+	 * @param @param originalStr 瀛楃涓�
+	 * @param @param regex 寰呮煡鎵惧瓙涓茬殑姝ｅ垯琛ㄨ揪寮�
+	 * @return List<String> 瀛愪覆闆嗗悎
 	 * 
 	 *         <pre>
-	 * 	对 /1.1.1.1:sid=0x2337c7074dofj02e,37775[1](queued=0,recved=6,sent=7,sid=0x2337c7074f1102e,sdlfjle,dsfe的结果是：
+	 * 	瀵�/1.1.1.1:sid=0x2337c7074dofj02e,37775[1](queued=0,recved=6,sent=7,sid=0x2337c7074f1102e,sdlfjle,dsfe鐨勭粨鏋滄槸锛�
 	 * sid=0x2337c7074dofj02e,
 	 * </pre>
 	 */
@@ -213,17 +220,18 @@ public class StringUtil {
 
 		final Pattern patternOfTargetStr = Pattern.compile( regex, Pattern.CANON_EQ );
 		final Matcher matcherOfTargetStr = patternOfTargetStr.matcher( originalStr );
-		/** 开始解析 */
+		/** 寮�瑙ｆ瀽 */
 		if ( matcherOfTargetStr.find() ) {
 			return StringUtil.trimToEmpty( matcherOfTargetStr.group() );
 		}
 		return EMPTY_STRING;
 	}
-	
+
 	/**
-	 * 生成空白行.
+	 * 鐢熸垚绌虹櫧琛�
 	 * 
-	 * @param lines 行数
+	 * @param lines
+	 *            琛屾暟
 	 */
 	public static String generateLineBlank( int lines ) {
 		StringBuilder sb = new StringBuilder();
@@ -234,8 +242,7 @@ public class StringUtil {
 
 		return sb.toString();
 	}
-	
-	
+
 	/**
 	 * make first letter lower case for str
 	 * 
@@ -245,26 +252,31 @@ public class StringUtil {
 		String firstLetter = str.substring( 0, 1 );
 		return firstLetter.toLowerCase() + str.substring( 1, str.length() );
 	}
-	
+
 	/***
 	 * check if orginalStr is null or empty. <br>
 	 * If have more than one originalStr, use isBlank(String...
 	 * originalStrArray)
 	 * 
-	 * @param originalStr	待确认值
+	 * @param originalStr
+	 *            寰呯‘璁ゅ�
 	 * @return true or false;
 	 */
 	public static boolean isBlank( String originalStr ) {
-		if ( null == originalStr || trimToEmpty( originalStr ).isEmpty() ){
+		if ( null == originalStr ){
 			return true;
 		}
-		return false;
+		if( originalStr.contains( BaseConstant.WORD_SEPARATOR ) ){
+			return false;
+		}
+		return trimToEmpty( originalStr ).isEmpty();
 	}
-	
+
 	/***
 	 * check if orginalStr is null or empty
 	 * 
-	 * @param String ... originalStrArray
+	 * @param String
+	 *            ... originalStrArray
 	 * @return true if have one blank at least.
 	 */
 	public static boolean isBlank( String... originalStrArray ) {
@@ -277,7 +289,7 @@ public class StringUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * check the originalStr is contain the whitespace
 	 * 
@@ -298,36 +310,57 @@ public class StringUtil {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * 字符串连接，使用指定分隔符
+	 * 
+	 * @param subStr
+	 * @return
+	 */
+	public static String join( String... subStrs ) {
+
+		if ( null == subStrs || 0 == subStrs.length ) {
+			return EMPTY_STRING;
+		}
+		StringBuilder sb = new StringBuilder();
+		for ( String subStr : subStrs ) {
+			sb.append( subStr ).append( BaseConstant.WORD_SEPARATOR );
+		}
+		String sbStr = sb.toString();
+		if ( sbStr.endsWith( BaseConstant.WORD_SEPARATOR ) ) {
+			sbStr = StringUtil.replaceLast( sbStr, BaseConstant.WORD_SEPARATOR, "" );
+		}
+		return sbStr;
+	}
 
 	/**
 	 * Description: Replaces last substring of this string that matches the
 	 * given regular expression with the given replacement.<br>
 	 * Do not worry about null pointer
+	 * 
 	 * @param @param regex
 	 * @param @param replacement
 	 * @return String
 	 * @throws
 	 */
 	public static String replaceAll( String originalStr, String replacement, String regex ) {
-		if( StringUtil.isBlank( regex ) )
+		if ( StringUtil.isBlank( regex ) )
 			return originalStr;
 		return StringUtil.trimToEmpty( originalStr ).replace( regex, replacement );
 	}
-	
+
 	public static String replaceAll( String originalStr, String replacement, String... regexArray ) {
-		
-		if( 0 == regexArray.length )
+
+		if ( 0 == regexArray.length )
 			return originalStr;
-		
-		for( String regex : regexArray){
+
+		for ( String regex : regexArray ) {
 			originalStr = StringUtil.replaceAll( originalStr, replacement, regex );
 		}
-		
+
 		return originalStr;
 	}
-	
-	
+
 	/**
 	 * Description: Replaces last substring of this string that matches the
 	 * given regular expression with the given replacement.
@@ -347,7 +380,7 @@ public class StringUtil {
 		if ( -1 == index )
 			return originalStr;
 
-		// 先存储这个index之前的所有str
+		// 鍏堝瓨鍌ㄨ繖涓猧ndex涔嬪墠鐨勬墍鏈塻tr
 		String temp = originalStr.substring( 0, index );
 		String temp2 = originalStr.substring( index, originalStr.length() );
 
@@ -361,9 +394,11 @@ public class StringUtil {
 	/**
 	 * Description: Replaces all {n} placeholder use params
 	 * 
-	 * @param originalStr a string such as :
+	 * @param originalStr
+	 *            a string such as :
 	 *            "select * from table where id={0}, name={1}, gender={3}"
-	 * @param replacementParams real params: 1,yinshi.nc,male
+	 * @param replacementParams
+	 *            real params: 1,yinshi.nc,male
 	 * @note n start with 0
 	 */
 	public static String replaceSequenced( String originalStr, Object... replacementParams ) {
@@ -375,18 +410,16 @@ public class StringUtil {
 
 		for ( int i = 0; i < replacementParams.length; i++ ) {
 			String elementOfParams = replacementParams[i] + EmptyObjectConstant.EMPTY_STRING;
-			if( StringUtil.trimToEmpty( elementOfParams ).equalsIgnoreCase( "null" ) )
+			if ( StringUtil.trimToEmpty( elementOfParams ).equalsIgnoreCase( "null" ) )
 				elementOfParams = EmptyObjectConstant.EMPTY_STRING;
 			originalStr = originalStr.replace( "{" + i + "}", StringUtil.trimToEmpty( elementOfParams ) );
 		}
 
 		return originalStr;
 	}
-	
-	
+
 	/**
-	 * 设置前缀，如果这个字符串已经是这个前缀了，那么就不作任何操作。
-	 * TODO none test
+	 * 璁剧疆鍓嶇紑锛屽鏋滆繖涓瓧绗︿覆宸茬粡鏄繖涓墠缂�簡锛岄偅涔堝氨涓嶄綔浠讳綍鎿嶄綔銆� TODO none test
 	 * */
 	public static String setPrefix( String originalStr, String prefix ) {
 		originalStr = StringUtil.trimToEmpty( originalStr );
@@ -396,16 +429,17 @@ public class StringUtil {
 		}
 		return originalStr;
 	}
-	
-	
-	
+
 	/**
-	 * 分割字符串，如果不是指定长度，抛出异常
+	 * 鍒嗗壊瀛楃涓诧紝濡傛灉涓嶆槸鎸囧畾闀垮害锛屾姏鍑哄紓甯�
 	 * 
-	 * @param originalStr 原字符串
-	 * @param regex 分割符
-	 * @param fixedLength 指定fixed长度
-	 * @return 分割后的字符串数组
+	 * @param originalStr
+	 *            鍘熷瓧绗︿覆
+	 * @param regex
+	 *            鍒嗗壊绗�
+	 * @param fixedLength
+	 *            鎸囧畾fixed闀垮害
+	 * @return 鍒嗗壊鍚庣殑瀛楃涓叉暟缁�
 	 * @throws NotExpectedFormatedException
 	 */
 	public static String[] splitWithFixedLength( String originalStr, String regex, int fixedLength ) throws NotExpectedFormatedException {
@@ -417,23 +451,26 @@ public class StringUtil {
 		if ( StringUtil.isBlank( originalStr ) ) {
 			if ( 0 == fixedLength )
 				return EmptyObjectConstant.EMPTY_STRING_ARRAY;
-			throw new NotExpectedFormatedException( "指定fixedLength为：" + fixedLength + ", 但是originalStr为空" );
+			throw new NotExpectedFormatedException( "鎸囧畾fixedLength涓猴細" + fixedLength + ", 浣嗘槸originalStr涓虹┖" );
 		}
 
 		String[] strArray = originalStr.split( regex );
 		if ( fixedLength != strArray.length ) {
-			throw new NotExpectedFormatedException( "指定fixedLength为：" + fixedLength + ", 但是originalStr为:" + originalStr );
+			throw new NotExpectedFormatedException( "鎸囧畾fixedLength涓猴細" + fixedLength + ", 浣嗘槸originalStr涓�" + originalStr );
 		}
 		return strArray;
 	}
 
 	/**
-	 * 分割字符串，如果小于指定长度（>=leastLength ok），抛出异常
+	 * 鍒嗗壊瀛楃涓诧紝濡傛灉灏忎簬鎸囧畾闀垮害锛�=leastLength ok锛夛紝鎶涘嚭寮傚父
 	 * 
-	 * @param originalStr 原字符串
-	 * @param regex 分割符
-	 * @param leastLength 指定的最小least长度
-	 * @return 分割后的字符串数组
+	 * @param originalStr
+	 *            鍘熷瓧绗︿覆
+	 * @param regex
+	 *            鍒嗗壊绗�
+	 * @param leastLength
+	 *            鎸囧畾鐨勬渶灏弆east闀垮害
+	 * @return 鍒嗗壊鍚庣殑瀛楃涓叉暟缁�
 	 * @throws NotExpectedFormatedException
 	 */
 	public static String[] splitWithLeastLength( String originalStr, String regex, int leastLength ) throws NotExpectedFormatedException {
@@ -444,23 +481,26 @@ public class StringUtil {
 		if ( StringUtil.isBlank( originalStr ) ) {
 			if ( 0 == leastLength )
 				return EmptyObjectConstant.EMPTY_STRING_ARRAY;
-			throw new NotExpectedFormatedException( "指定leastLength为：" + leastLength + ", 但是originalStr为空" );
+			throw new NotExpectedFormatedException( "鎸囧畾leastLength涓猴細" + leastLength + ", 浣嗘槸originalStr涓虹┖" );
 		}
 
 		String[] strArray = originalStr.split( regex );
 		if ( leastLength > strArray.length ) {
-			throw new NotExpectedFormatedException( "指定leastLength为：" + leastLength + ", 但是originalStr为:" + originalStr );
+			throw new NotExpectedFormatedException( "鎸囧畾leastLength涓猴細" + leastLength + ", 浣嗘槸originalStr涓�" + originalStr );
 		}
 		return strArray;
 	}
 
 	/**
-	 * 分割字符串，如果大于指定长度（<=leastLength ok），抛出异常
+	 * 鍒嗗壊瀛楃涓诧紝濡傛灉澶т簬鎸囧畾闀垮害锛�=leastLength ok锛夛紝鎶涘嚭寮傚父
 	 * 
-	 * @param originalStr 原字符串
-	 * @param regex 分割符
-	 * @param maxLength 指定的最大max长度
-	 * @return 分割后的字符串数组
+	 * @param originalStr
+	 *            鍘熷瓧绗︿覆
+	 * @param regex
+	 *            鍒嗗壊绗�
+	 * @param maxLength
+	 *            鎸囧畾鐨勬渶澶ax闀垮害
+	 * @return 鍒嗗壊鍚庣殑瀛楃涓叉暟缁�
 	 * @throws NotExpectedFormatedException
 	 */
 	public static String[] splitWithMaxLength( String originalStr, String regex, int maxLength ) throws NotExpectedFormatedException {
@@ -474,43 +514,45 @@ public class StringUtil {
 
 		String[] strArray = originalStr.split( regex );
 		if ( maxLength < strArray.length ) {
-			throw new NotExpectedFormatedException( "指定maxLength为：" + maxLength + ", 但是originalStr为:" + originalStr );
+			throw new NotExpectedFormatedException( "鎸囧畾maxLength涓猴細" + maxLength + ", 浣嗘槸originalStr涓�" + originalStr );
 		}
 		return strArray;
 	}
-	
-	
+
 	/**
-	 * 判断字符串是否超过指定长度，如何超过，添加指定后缀
-	 * @param originalStr	"银时的"
-	 * @param maxLength		2
-	 * @param suffix		...
-	 * @return			"银时..."
+	 * 鍒ゆ柇瀛楃涓叉槸鍚﹁秴杩囨寚瀹氶暱搴︼紝濡備綍瓒呰繃锛屾坊鍔犳寚瀹氬悗缂�
+	 * 
+	 * @param originalStr
+	 *            "閾舵椂鐨�
+	 * @param maxLength
+	 *            2
+	 * @param suffix
+	 *            ...
+	 * @return "閾舵椂..."
 	 */
 	public static String subStringIfTooLong( String originalStr, int maxLength, String suffix ) {
-		if( StringUtil.isBlank( originalStr ) )
+		if ( StringUtil.isBlank( originalStr ) )
 			return EmptyObjectConstant.EMPTY_STRING;
-		if( maxLength < 0 )
+		if ( maxLength < 0 )
 			maxLength = 0;
-		if( originalStr.length() > maxLength )
+		if ( originalStr.length() > maxLength )
 			return originalStr.substring( 0, maxLength ) + StringUtil.trimToEmpty( suffix );
 		return originalStr;
 	}
-	
+
 	/**
-	 * toString()方法<br>
-	 * Note:不会出现npe，不会返回null
+	 * toString()鏂规硶<br>
+	 * Note:涓嶄細鍑虹幇npe锛屼笉浼氳繑鍥瀗ull
+	 * 
 	 * @param t
 	 * @return
 	 */
-	public static <T> String toString( T t ){
-		if( ObjectUtil.isBlank( t ) )
+	public static < T > String toString( T t ) {
+		if ( ObjectUtil.isBlank( t ) )
 			return EmptyObjectConstant.EMPTY_STRING;
 		return t.toString();
 	}
-	
-	
-	
+
 	/**
 	 * Returns a copy of the string, with leading and trailing whitespace
 	 * omitted. Don't worry the NullPointerException. Will never return Null.
@@ -521,10 +563,9 @@ public class StringUtil {
 	public static String trimToEmpty( String originalStr ) {
 		if ( null == originalStr || originalStr.isEmpty() )
 			return EMPTY_STRING;
-		if( originalStr.equals( BaseConstant.WORD_SEPARATOR ) )
+		if ( originalStr.equals( BaseConstant.WORD_SEPARATOR ) )
 			return originalStr;
 		return originalStr.trim();
 	}
-	
 
 }

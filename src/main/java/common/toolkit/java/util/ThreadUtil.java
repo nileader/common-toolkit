@@ -95,8 +95,17 @@ public class ThreadUtil {
 		ThreadUtil.scheduleAtFixedRateDelayTimeMillisDelay( task, DateUtil.getTimeMillisToAfterDaysHour( delayDays, hourOfTomorrow ), period );
 	}
 	
-	
-	
+	/**
+	 * Sleep thread without exception.
+	 * @param millis
+	 */
+	public static void sleep( long millis ){
+		try {
+			Thread.sleep( millis );
+		} catch ( Throwable e ) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	

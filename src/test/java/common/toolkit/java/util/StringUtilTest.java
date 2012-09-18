@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import common.toolkit.java.constant.BaseConstant;
 import common.toolkit.java.constant.EmptyObjectConstant;
 import common.toolkit.java.constant.SymbolConstant;
 import common.toolkit.java.exception.NotExpectedFormatedException;
@@ -141,6 +142,21 @@ public class StringUtilTest {
 		assertTrue( StringUtil.isContainWhitespace( "ni leader" ) );
 		assertTrue( StringUtil.isContainWhitespace( "nileader " ) );
 		assertFalse( StringUtil.isContainWhitespace( "nileader" ) );
+	}
+	
+	@Test
+	public void join() {
+		String str1 = "nileader";
+		String str2 = "";
+		String str3 = "中文";
+		
+		String expectedStr1 = str1 + BaseConstant.WORD_SEPARATOR + str2 + BaseConstant.WORD_SEPARATOR + str3;
+		String expectedStr2 = "" + BaseConstant.WORD_SEPARATOR + "" + BaseConstant.WORD_SEPARATOR + "";
+		
+		assertEquals( expectedStr1, StringUtil.join( str1,str2,str3 ) );
+		assertEquals( "", StringUtil.join( null ) );
+		assertEquals( expectedStr2, StringUtil.join( "","","" ) );
+		
 	}
 	
 	@Test

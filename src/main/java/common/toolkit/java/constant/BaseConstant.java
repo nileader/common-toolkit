@@ -9,6 +9,9 @@ package common.toolkit.java.constant;
 public class BaseConstant {
 	
 	/** mill seconds of one day */
+	public static long MILLISECONDS_OF_ONE_SECOND = 1000;
+	
+	/** mill seconds of one day */
 	public static long MILLISECONDS_OF_ONE_MINUTE = 1000 * 60;
 	
 	/** mill seconds of one day */
