@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -131,10 +133,12 @@ public class FileUtil {
 	}
 
 	/**
-	 * @param content content need to write
-     * @param     append    if <code>true</code>, then bytes will be written
-     *                      to the end of the file rather than the beginning
-	 * @throws IOException 
+	 * @param content
+	 *            content need to write
+	 * @param append
+	 *            if <code>true</code>, then bytes will be written to the end of
+	 *            the file rather than the beginning
+	 * @throws IOException
 	 */
 	public static boolean write( String filePath, String content, boolean append ) throws IOException {
 		FileWriter filewriter = null;
@@ -143,30 +147,51 @@ public class FileUtil {
 			filewriter = new FileWriter( file, append );
 			filewriter.write( content );
 			return true;
-		}finally{
+		} finally {
 			IOUtil.closeWriter( filewriter );
 		}
 	}
-	
+
+	/**
+	 * @param filePath
+	 * @param content
+	 * @param encode
+	 * @return
+	 */
+	public static boolean write( String filePath, String content, String encode ) {
+		try {
+			OutputStreamWriter out = new OutputStreamWriter( new FileOutputStream( filePath ), encode );
+			out.write( content );
+			out.flush();
+			out.close();
+			return true;
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	/**
 	 * 使用GBK编码读取文件
 	 * 
-	 * @param filePath 文件路径
+	 * @param filePath
+	 *            文件路径
 	 * @return String 文件内容
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static String readFile( String filePath ) throws IOException {
 		return readFile( filePath, EncodingConstant.GBK );
 	}
-	
-	
+
 	/**
 	 * 使用指定编码读取文件,此方法无须用户关闭资源，方法内部已经全部关闭了。
 	 * 
-	 * @param filePath 文件路径
-	 * @param encoding 读取的编码
-	 * @return String  文件内容
-	 * @throws IOException 
+	 * @param filePath
+	 *            文件路径
+	 * @param encoding
+	 *            读取的编码
+	 * @return String 文件内容
+	 * @throws IOException
 	 */
 	public static String readFile( String filePath, String encoding ) throws IOException {
 
@@ -178,7 +203,7 @@ public class FileUtil {
 		} catch ( FileNotFoundException e ) {
 			throw e;
 		}
-		
+
 		BufferedReader br = new BufferedReader( new InputStreamReader( fileInputStream, encoding ) );
 		String data = null;
 		try {
@@ -188,7 +213,7 @@ public class FileUtil {
 			return content.toString();
 		} catch ( IOException e ) {
 			throw new IOException( "读取文件异常: " + e.getMessage() );
-		}finally{
+		} finally {
 			try {
 				fileInputStream.close();
 				br.close();
@@ -196,12 +221,14 @@ public class FileUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Note: You need to close Reader.
-	 * @param filePath 文件路径
-	 * @return String  文件内容
-	 * @throws IOException 
+	 * 
+	 * @param filePath
+	 *            文件路径
+	 * @return String 文件内容
+	 * @throws IOException
 	 */
 	public static Reader readFileReader( String filePath ) throws IOException {
 
@@ -214,16 +241,16 @@ public class FileUtil {
 		}
 		return new InputStreamReader( fileInputStream );
 	}
-	
-	
-	
+
 	/**
 	 * 使用指定编码读取文件,此方法需要用户关闭资源
 	 * 
-	 * @param filePath 文件路径
-	 * @param encoding 读取的编码
-	 * @return String  文件内容
-	 * @throws IOException 
+	 * @param filePath
+	 *            文件路径
+	 * @param encoding
+	 *            读取的编码
+	 * @return String 文件内容
+	 * @throws IOException
 	 */
 	public static BufferedReader readFileReturnBufferedReader( String filePath, String encoding ) throws IOException {
 
@@ -236,35 +263,30 @@ public class FileUtil {
 		}
 		return new BufferedReader( new InputStreamReader( fileInputStream, encoding ) );
 	}
-	
-	
+
 	/**
 	 * Read properties file.
+	 * 
 	 * @param filePath
 	 * @return
 	 * @throws IOException
 	 */
 	public static Properties readPropertyFile( String filePath ) throws IOException {
-		
+
 		Properties properties = new Properties();
 		Reader reader = null;
 		try {
 			reader = FileUtil.readFileReader( filePath );
 			properties.load( reader );
 			return properties;
-		} finally{
+		} finally {
 			IOUtil.closeReader( reader );
 		}
 	}
-	
-	
-	
-	
-	
 
 }
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings( "rawtypes" )
 class FileWrapper implements Comparable {
 	/** File */
 	private File file;

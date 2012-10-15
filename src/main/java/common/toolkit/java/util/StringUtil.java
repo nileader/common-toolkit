@@ -3,15 +3,18 @@ package common.toolkit.java.util;
 import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING;
 import static common.toolkit.java.constant.RegExpConstant.PATTERN_OF_CONTAINS_IP;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import common.toolkit.java.constant.BaseConstant;
 import common.toolkit.java.constant.EmptyObjectConstant;
 import common.toolkit.java.exception.NotExpectedFormatedException;
+import common.toolkit.java.util.collection.CollectionUtil;
 
 /**
  * Description: String Utils
@@ -263,10 +266,10 @@ public class StringUtil {
 	 * @return true or false;
 	 */
 	public static boolean isBlank( String originalStr ) {
-		if ( null == originalStr ){
+		if ( null == originalStr ) {
 			return true;
 		}
-		if( originalStr.contains( BaseConstant.WORD_SEPARATOR ) ){
+		if ( originalStr.contains( BaseConstant.WORD_SEPARATOR ) ) {
 			return false;
 		}
 		return trimToEmpty( originalStr ).isEmpty();
@@ -344,9 +347,7 @@ public class StringUtil {
 	 * @throws
 	 */
 	public static String replaceAll( String originalStr, String replacement, String regex ) {
-		if ( StringUtil.isBlank( regex ) )
-			return originalStr;
-		return StringUtil.trimToEmpty( originalStr ).replace( regex, replacement );
+		return StringUtil.trimToEmpty( originalStr ).replaceAll( regex, replacement );
 	}
 
 	public static String replaceAll( String originalStr, String replacement, String... regexArray ) {
@@ -391,6 +392,29 @@ public class StringUtil {
 		return originalStr;
 	}
 
+	/**
+	 * 用一个map中的值来替换占位符 ${key}
+	 * 
+	 * @param originalStr
+	 *            a string such as :
+	 *            "select * from table where id=${id}, name=${name}, gender=${gender}"
+	 */
+	public static String replacePlaceholder( String originalStr, Map<String,String> values ) {
+		if(CollectionUtil.isBlank( values )){
+			return originalStr;
+		}
+		if ( StringUtil.isBlank( originalStr ) )
+			return EMPTY_STRING;
+		
+		for( String key : values.keySet() ){
+			String value = StringUtil.trimToEmpty( values.get( key ) );
+			String regex = "\\$\\{" + key + "\\}";
+			originalStr = originalStr.replaceAll( regex, value );
+		}
+		return originalStr;
+	}
+	
+	
 	/**
 	 * Description: Replaces all {n} placeholder use params
 	 * 
@@ -566,6 +590,40 @@ public class StringUtil {
 		if ( originalStr.equals( BaseConstant.WORD_SEPARATOR ) )
 			return originalStr;
 		return originalStr.trim();
+	}
+
+	/**
+	 * URL编码
+	 * 
+	 * @param s
+	 *            String to be translated.
+	 * @param enc
+	 *            The name of a supported character encoding.
+	 * @return
+	 */
+	public static String urlEncode( String s, String enc ) {
+		if ( StringUtil.isBlank( s ) )
+			return StringUtil.trimToEmpty( s );
+		try {
+			return java.net.URLEncoder.encode( trimToEmpty( s ), enc );
+		} catch ( UnsupportedEncodingException e ) {
+			return s;
+		}
+	}
+
+	/**
+	 * URL编码,使用UTF-8编码
+	 * 
+	 * @param s
+	 *            String to be translated.
+	 * @param enc
+	 *            The name of a supported character encoding.
+	 * @return
+	 */
+	public static String urlEncode( String s ) {
+		if ( StringUtil.isBlank( s ) )
+			return StringUtil.trimToEmpty( s );
+		return urlEncode( trimToEmpty( s ), "UTF-8" );
 	}
 
 }

@@ -73,6 +73,16 @@ public class IntegerUtil {
 		}
 		return originalInt;
 	}
+	
+	/**
+	 * 判断是否大余0
+	 * @return false if num <=0  , true if num >0
+	 */
+	public static boolean isBiggerThan0( int num ){
+		if( 0>= num )
+			return false;
+		return true;
+	}
 
 	/**
 	 * Return maxInt if too big, else return original.
