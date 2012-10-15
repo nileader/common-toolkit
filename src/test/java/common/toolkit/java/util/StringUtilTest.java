@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -200,8 +202,29 @@ public class StringUtilTest {
 		assertEquals( originalStr, StringUtil.replaceLast( originalStr, "yinshi.nc", replacement ) );
 	}
 
+
 	@Test
-	public void treplaceSequenced() {
+	public void replacePlaceholder() {
+
+		
+		Map<String,String> values = new HashMap<String,String>();
+		values.put( "id", "11" );
+		values.put( "name", "银时" );
+		values.put( "gender", "male" );
+		
+		String originalStr = "select * from table where id=${id}, name=${name}, gender=${gender},{gender}";
+		String expectedStr = "select * from table where id=11, name=银时, gender=male,{gender}";
+
+		assertEquals( expectedStr, StringUtil.replacePlaceholder( originalStr, values ) );
+		assertEquals( EMPTY_STRING, StringUtil.replacePlaceholder( EMPTY_STRING, values ) );
+		assertEquals( EMPTY_STRING, StringUtil.replacePlaceholder( EMPTY_STRING, null ) );
+		assertEquals( originalStr, StringUtil.replacePlaceholder( originalStr, null) );
+	}
+	
+	
+	
+	@Test
+	public void replaceSequenced() {
 
 		String originalStr = "select * from table where id={0}, name={1}, gender={2}";
 		String expectedStr = "select * from table where id='1', name='yinshi.nc', gender='male'";
