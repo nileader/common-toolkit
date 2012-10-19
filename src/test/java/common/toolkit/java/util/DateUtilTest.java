@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import common.toolkit.java.entity.DateFormat;
 import common.toolkit.java.exception.IllegalParamException;
 
 /**
@@ -65,6 +66,14 @@ public class DateUtilTest {
 		System.err.println( "当前dates中设置的时间" + dates + ", 例如当前是2012-03-30,那么hour应该设置为:2012-03-29,2012-03-28" );
 
 		assertEquals( dates, DateUtil.getDaysBefore( 2 ) );
+	}
+	
+	@Test
+	public void getNowTime() {
+		long time = 1350548132652l;
+		assertEquals( "2012-10-18 16:15:32", DateUtil.getNowTime( "yyyy-MM-dd HH:mm:ss", time ) );
+		assertEquals( "2012-10-18T16:15:32Z", DateUtil.getNowTime( DateFormat.SolrDateTime, time ) );
+		assertEquals( "2012-10-18 16:15:32", DateUtil.getNowTime( DateFormat.DateTime, time ) );
 	}
 
 	@Test
