@@ -78,8 +78,9 @@ public class DbcpUtil {
 			p.setProperty( "removeAbandonedTimeout", "120" );
 			p.setProperty( "testOnBorrow", "true" );
 			p.setProperty( "logAbandoned", "true" );
-			LOG.warn( "Start init datasource[driverName:" + driverClassName + ", url: " + p.getProperty( "url" ) + ", username: " + username + ", password: " + password );
+			LOG.warn( "Start init datasource[driverName:" + driverClassName + ", url: " + p.getProperty( "url" ) + ", username: [" + username + "], password: [" + password + "]" );
 			DbcpUtil.dataSource = ( BasicDataSource ) BasicDataSourceFactory.createDataSource( p );
+			LOG.warn( "完成数据源创建，是否链接：" + !DbcpUtil.dataSource.isClosed() );
 		} catch ( Exception e ) {
 			throw new Exception( "创建数据源失败: " + e.getMessage(), e.getCause() );
 		}

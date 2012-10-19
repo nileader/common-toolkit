@@ -76,6 +76,24 @@ public class DateUtil {
 		return StringUtil.trimToEmpty( dateString );
 	}
 	
+	/**
+	 * @return a formated date:"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"
+	 *///2012-09-27T11:36:34Z
+	public static String getNowTime( DateFormat dateFormat, long dateLong ) {
+		
+		String dateFormatString = dateFormat.getFormat();
+		if( dateFormat == DateFormat.SolrDateTime ){
+			dateFormatString = "yyyy-MM-dd+HH:mm:ss#";
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat( dateFormatString );
+		Date dt = new Date( dateLong );
+		String dateString = sdf.format( dt );
+		if( dateFormat == DateFormat.SolrDateTime ){
+			dateString = dateString.replace( "+", "T" ).replace( "#", "Z" );
+		}
+		return StringUtil.trimToEmpty( dateString );
+	}
+	
 	
 	
 	/**
