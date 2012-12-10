@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 /**
  * @author 银时 yinshi.nc@taobao.com
  */
-public class JsonUtil<T> {
+public class JsonUtil<T extends Object> {
 	
 	/**
 	 * 获取一个 TypeToken< T > 对象

@@ -1,5 +1,7 @@
 package common.toolkit.java.util.number;
 
+import java.security.InvalidParameterException;
+
 import common.toolkit.java.util.StringUtil;
 
 /**
@@ -60,19 +62,29 @@ public class IntegerUtil {
 	}
 
 	/**
-	 * 如果非正,则返回默认值
-	 * 
+	 * 如果非正,则返回默认值<br>
 	 * @param originalInt
 	 * @param defaultInt
 	 *            默认Integer
-	 * @return
+	 * @return originalInt if originalInt>0, return defaultInt if originalInt<=0
 	 */
-	public static Integer defaultIfNotPositive( Integer originalInt, Integer defaultInt ) {
+	public static Integer defaultIfSmallerThan0( Integer originalInt, Integer defaultInt ) {
 		if ( 0 >= originalInt ) {
 			return defaultInt;
 		}
 		return originalInt;
 	}
+	
+	/** 将String 转化成 Integer，如果小于等于0，将抛异常 */
+	public static Integer exceptionIfSmallerThan0( String originalStr )throws Exception{
+		try {
+			return Integer.parseInt( StringUtil.trimToEmpty( originalStr ) );
+		} catch ( Exception e ) {
+			throw new Exception( originalStr + " is smaller than 0, or it is a  invalid parameter " );
+		}
+	}
+	
+	
 	
 	/**
 	 * 判断是否大余0
