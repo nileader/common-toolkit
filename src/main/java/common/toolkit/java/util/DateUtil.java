@@ -39,6 +39,28 @@ public class DateUtil {
 	}
 	
 	/**
+	 * 将13位long型的时候转换成指定格式字符串时间<br>
+	 * 
+	 * @return like format yyyy-MM-dd HH:mm:ss.
+	 */
+	public static String convertLong2String( Long longFormatDateTime, DateFormat dateFormat ) 
+	throws IllegalParamException{
+		
+		String dateFormatString = dateFormat.getFormat();
+		if( dateFormat == DateFormat.SolrDateTime ){
+			dateFormatString = "yyyy-MM-dd+HH:mm:ss#";
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat( dateFormatString );
+		Date dt = new Date( longFormatDateTime );
+		String dateString = sdf.format( dt );
+		if( dateFormat == DateFormat.SolrDateTime ){
+			dateString = dateString.replace( "+", "T" ).replace( "#", "Z" );
+		}
+		return StringUtil.trimToEmpty( dateString );
+	} 
+	
+	
+	/**
 	 * Convert java.util.Date to String<br>
 	 * 
 	 * @return like format yyyy-MM-dd HH:mm:ss.
