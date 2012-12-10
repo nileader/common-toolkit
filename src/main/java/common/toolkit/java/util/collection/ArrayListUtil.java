@@ -32,7 +32,7 @@ public class ArrayListUtil extends CollectionUtil {
 			return arrayListNew;
 		}
 		
-		stepLength = IntegerUtil.defaultIfNotPositive( stepLength, 1 );
+		stepLength = IntegerUtil.defaultIfSmallerThan0( stepLength, 1 );
 		if( 1 == stepLength )
 			return arrayList;
 		

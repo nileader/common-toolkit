@@ -60,7 +60,7 @@ public class SSHUtil {
 				throw new SSHException( e.getMessage(), e );
 			}
 		}
-		port = IntegerUtil.defaultIfNotPositive( port, 22 );
+		port = IntegerUtil.defaultIfSmallerThan0( port, 22 );
 		userName = StringUtil.defaultIfBlank( userName, USERNAME );
 		password = StringUtil.defaultIfBlank( password, PASSWORD );
 		Connection conn = null;
@@ -220,7 +220,7 @@ public class SSHUtil {
 
 		if ( StringUtil.isBlank( command ) )
 			return EMPTY_STRING;
-		port = IntegerUtil.defaultIfNotPositive( port, 22 );
+		port = IntegerUtil.defaultIfSmallerThan0( port, 22 );
 		Connection conn = null;
 		Session session = null;
 		BufferedReader read = null;
@@ -291,7 +291,7 @@ public class SSHUtil {
 
 		if ( StringUtil.isBlank( command ) )
 			return;
-		port = IntegerUtil.defaultIfNotPositive( port, 22 );
+		port = IntegerUtil.defaultIfSmallerThan0( port, 22 );
 		Connection conn = null;
 		Session session = null;
 		BufferedReader read = null;
@@ -356,7 +356,7 @@ public class SSHUtil {
 
 		if ( StringUtil.isBlank( command ) )
 			return null;
-		port = IntegerUtil.defaultIfNotPositive( port, 22 );
+		port = IntegerUtil.defaultIfSmallerThan0( port, 22 );
 		SSHResource sshResource = new SSHResource();
 
 		try {

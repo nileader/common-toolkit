@@ -131,7 +131,7 @@ public class ListUtil {
 	 * @return
 	 */
 	public static <T> Map< Integer, List< T > > split( List< T > list, int size ) {
-		size = IntegerUtil.defaultIfNotPositive( size, 100 );
+		size = IntegerUtil.defaultIfSmallerThan0( size, 100 );
 		Map< Integer, List< T > > map = new HashMap< Integer, List< T > >();
 		if ( CollectionUtil.isBlank( list ) )
 			return map;
