@@ -39,6 +39,21 @@ public class DateUtil {
 	}
 	
 	/**
+	 * Convert java.util.Date to String<br>
+	 * 
+	 * @return like format yyyy-MM-dd HH:mm:ss.
+	 */
+	public static String convertDate2String( Date date, String dateFormat ) {
+		if ( null == date )
+			return EMPTY_STRING;
+		long seconds = date.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat( dateFormat );
+		Date dt = new Date( seconds );
+		String dateString = sdf.format( dt );
+		return StringUtil.trimToEmpty( dateString );
+	}
+	
+	/**
 	 * 将13位long型的时候转换成指定格式字符串时间<br>
 	 * 
 	 * @return like format yyyy-MM-dd HH:mm:ss.
@@ -56,6 +71,19 @@ public class DateUtil {
 		if( dateFormat == DateFormat.SolrDateTime ){
 			dateString = dateString.replace( "+", "T" ).replace( "#", "Z" );
 		}
+		return StringUtil.trimToEmpty( dateString );
+	} 
+	
+	 /** 将13位long型的时候转换成指定格式字符串时间<br>
+	 * 
+	 * @return like format yyyy-MM-dd HH:mm:ss.
+	 */
+	public static String convertLong2String( Long longFormatDateTime, String dateFormat ) 
+	throws IllegalParamException{
+		
+		SimpleDateFormat sdf = new SimpleDateFormat( dateFormat );
+		Date dt = new Date( longFormatDateTime );
+		String dateString = sdf.format( dt );
 		return StringUtil.trimToEmpty( dateString );
 	} 
 	
