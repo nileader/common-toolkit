@@ -57,9 +57,32 @@ public class LongUtil {
 		return originalLong;
 	}
 	
+	/** 将String 转化成 Integer，如果小于等于0，将抛异常 */
+	public static Long exceptionIfSmallerThan0( String originalStr )throws Exception{
+		try {
+			long num = Long.parseLong( StringUtil.trimToEmpty( originalStr ) );
+			if( num > 0  )
+				return num;
+			else
+				throw new Exception();
+		} catch ( Exception e ) {
+			throw new Exception( originalStr + " is smaller than 0, or it is a  invalid parameter " );
+		}
+	}
+	
 	/** 是否为0 */
 	public static boolean isBlank( Long originalLong ) {
 		return (null == originalLong || 0 == originalLong);
+	}
+	
+	/**
+	 * 判断是否大余0
+	 * @return false if num <=0  , true if num >0
+	 */
+	public static boolean isBiggerThan0( long num ){
+		if( 0>= num )
+			return false;
+		return true;
 	}
 	
 	/** 是否为0 */

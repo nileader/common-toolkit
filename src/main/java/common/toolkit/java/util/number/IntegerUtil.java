@@ -78,7 +78,11 @@ public class IntegerUtil {
 	/** 将String 转化成 Integer，如果小于等于0，将抛异常 */
 	public static Integer exceptionIfSmallerThan0( String originalStr )throws Exception{
 		try {
-			return Integer.parseInt( StringUtil.trimToEmpty( originalStr ) );
+			int num = Integer.parseInt( StringUtil.trimToEmpty( originalStr ) );
+			if( num > 0  )
+				return num;
+			else
+				throw new Exception();
 		} catch ( Exception e ) {
 			throw new Exception( originalStr + " is smaller than 0, or it is a  invalid parameter " );
 		}
