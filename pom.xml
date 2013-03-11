@@ -13,8 +13,8 @@
 		<source.encoding>UTF-8</source.encoding>
 		<java.version>1.6</java.version>
 		<!-- 请自行修改仓库地址 -->
-		<repository.snapshots.url>http://mvnrepo.taobao.ali.com/mvn/snapshots</repository.snapshots.url>
-		<repository.releases.url>http://mvnrepo.taobao.ali.com/mvn/releases</repository.releases.url>
+		<repository.snapshots.url>http://mvnrepo.code.taobao.org/nexus/content/repositories/snapshots/</repository.snapshots.url>
+		<repository.releases.url>http://mvnrepo.code.taobao.org/nexus/content/repositories/releases/</repository.releases.url>
 		<!-- Maven plugin -->
 		<maven-source-plugin.version>2.0.3</maven-source-plugin.version>
 		<maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
@@ -304,11 +304,11 @@
 
 	<distributionManagement>
 		<repository>
-			<id>releases</id>
+			<id>taocodeReleases</id>
 			<url>${repository.releases.url}</url>
 		</repository>
 		<snapshotRepository>
-			<id>snapshots</id>
+			<id>taocodeSnapshots</id>
 			<url>${repository.snapshots.url}</url>
 		</snapshotRepository>
 	</distributionManagement>
