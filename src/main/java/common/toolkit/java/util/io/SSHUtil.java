@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ch.ethz.ssh2.Connection;
@@ -135,16 +136,21 @@ public class SSHUtil {
 					// 第四行通常是这样：
 					// Mem: 1572988k total, 1490452k used, 82536k free, 138300k
 					// buffers
-					String[] memArray = line.replace( MEM_USAGE_STRING, EMPTY_STRING ).split( COMMA );
-					totalMem = StringUtil.trimToEmpty( memArray[0].replace( "total", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
-					freeMem = StringUtil.trimToEmpty( memArray[2].replace( "free", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
-					buffersMem = StringUtil.trimToEmpty( memArray[3].replace( "buffers", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
+					
+					// updated by hengyunabc
+					// 有可能是这样的：
+					// KiB Mem:   8085056 total,  7557820 used,   527236 free,   385016 buffers
+					// 所以这里的字符串处理不对，直接改为匹配数字即可。
+					List<String> list = StringUtil.findAllByRegex(line, "\\d+");
+					totalMem = list.get(0);
+					freeMem = list.get(1);
+					buffersMem = list.get(2);
 				} else if ( 5 == lineNum ) {
 					// 第四行通常是这样：
 					// Swap: 2096472k total, 252k used, 2096220k free, 788540k
 					// cached
-					String[] memArray = line.replace( SWAP_USAGE_STRING, EMPTY_STRING ).split( COMMA );
-					cachedMem = StringUtil.trimToEmpty( memArray[3].replace( "cached", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
+					List<String> list = StringUtil.findAllByRegex(line, "\\d+");
+					cachedMem = list.get(3);
 
 					if ( StringUtil.isBlank( totalMem, freeMem, buffersMem, cachedMem ) )
 						throw new Exception( "Error when get system performance of ip: " + conn.getHostname()
