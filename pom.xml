@@ -4,7 +4,7 @@
 	<groupId>common.toolkit</groupId>
 	<artifactId>common-toolkit</artifactId>
 	<name>common-toolkit</name>
-	<version>0.0.4</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 
