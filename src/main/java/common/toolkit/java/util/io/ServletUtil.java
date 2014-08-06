@@ -31,10 +31,10 @@ import common.toolkit.java.util.StringUtil;
  * 类说明: Servlet相关工具类<br>
  * 请注意本类的一些概念：<br>
  * requestURI:  /taokeeper/monitor.do?method=alarm&clusterId=1 <br>
- * requestSimpleURL:  http://ops.jm.taobao.net/taokeeper/monitor.do <br>
- * requestFullURL:  http://ops.jm.taobao.net/taokeeper/monitor.do?method=alarm&clusterId=1 <br>
+ * requestSimpleURL:  http://www.foo.com/taokeeper/monitor.do <br>
+ * requestFullURL:  http://www.foo.com/taokeeper/monitor.do?method=alarm&clusterId=1 <br>
  * contextPath: /taokeeper <br>
- * requestServer: ops.jm.taobao.net:80 <br>
+ * requestServer: www.foo.com:80 <br>
  * 
  * @author 银时 yinshi.nc@taobao.com
  */
@@ -46,8 +46,8 @@ public class ServletUtil {
 	 * 注意：本方法只会对参数的value进行编码，不会影响参数的key
 	 * 
 	 * <pre>
-	 * encodeParamsForRequestURL("http://ops.jm.taobao.net/taokeeper/index.do?method=test&userName=中文名字&password=hello1234", "GBK")<br>
-	 * =http://ops.jm.taobao.net/taokeeper/index.do?method=test&userName=%E4%B8%AD%E6%96%87%E5%90%8D%E5%AD%97&password=hello1234
+	 * encodeParamsForRequestURL("http://www.foo.com/taokeeper/index.do?method=test&userName=中文名字&password=hello1234", "GBK")<br>
+	 * =http://www.foo.com/taokeeper/index.do?method=test&userName=%E4%B8%AD%E6%96%87%E5%90%8D%E5%AD%97&password=hello1234
 	 * </pre>
 	 * @param requestURL 完整的URL路径
 	 * @param encoding 参数编码,默认使用UTF-8编码
@@ -63,7 +63,7 @@ public class ServletUtil {
 		encoding = StringUtil.defaultIfBlank( encoding, EncodingConstant.UTF8 );
 		
 		/**
-		 * e.g.http://ops.jm.taobao.net/taokeeper/index.do?method=test&userName=
+		 * e.g.http://www.foo.com/taokeeper/index.do?method=test&userName=
 		 * ???&password=hello1234 为了能够处理这样的URL,就不能以?来分割了.
 		 */
 		requestURL = requestURL.replaceFirst( "[?]", BaseConstant.WORD_SEPARATOR );
@@ -223,12 +223,12 @@ public class ServletUtil {
 	}
 
 	/**
-	 * 从Request中获取请求的域名,以点开头( e.g. .jm.taobao.net )
+	 * 从Request中获取请求的域名,以点开头( e.g. .foo.com )
 	 * @param request
-	 * @return String 域名(不包含端口号,e.g. .jm.taobao.net)
+	 * @return String 域名(不包含端口号,e.g. .foo.com)
 	 * 
 	 *         <pre>
-	 * .jm.taobao.net
+	 * .foo.com
 	 * </pre>
 	 */
 	public static String getDomainFromRequest( HttpServletRequest request ) {
@@ -241,12 +241,12 @@ public class ServletUtil {
 	}
 
 	/**
-	 * 从requestURL中获取请求的域名,以点开头( e.g. .jm.taobao.net )
+	 * 从requestURL中获取请求的域名,以点开头( e.g. .jm.foo.net )
 	 * @param request
-	 * @return String 域名(不包含端口号,e.g. .jm.taobao.net)
+	 * @return String 域名(不包含端口号,e.g. .jm.foo.net)
 	 * 
 	 *         <pre>
-	 * getDomainFromRequestURL( &quot;http://ops.jm.taobao.net/taokeeper/monitor.do...&quot; ) = &quot;.jm.taobao.net&quot;;
+	 * getDomainFromRequestURL( &quot;http://ops.jm.foo.net/taokeeper/monitor.do...&quot; ) = &quot;.jm.foo.net&quot;;
 	 * </pre>
 	 */
 	public static String getDomainFromRequestURL( final String requestURL ) throws IllegalParamException {
@@ -317,7 +317,7 @@ public class ServletUtil {
 	 * @return String Server( ip:port or domain:port )
 	 * 
 	 *         <pre>
-	 * ops.jm.taobao.net:8080
+	 * ops.jm.foo.net:8080
 	 * </pre>
 	 */
 	public static String getServerFromRequest( HttpServletRequest request ) {
@@ -329,12 +329,12 @@ public class ServletUtil {
 	/**
 	 * 从requestURL中获取request请求的Server( ip:port or domain:port )
 	 * @param requestURL 
-	 *            http://ops.jm.taobao.net/taokeeper/monitor.do?method=alarm
+	 *            http://ops.jm.foo.net/taokeeper/monitor.do?method=alarm
 	 *            &clusterId=1 <br>
 	 * @return String Server( ip:port or domain:port )
 	 * 
 	 *         <pre>
-	 * ops.jm.taobao.net:80
+	 * ops.jm.foo.net:80
 	 * </pre>
 	 * @throws IllegalParamException
 	 */
@@ -359,7 +359,7 @@ public class ServletUtil {
 
 	
 	/**
-	 * 获取一个请求的简单URL（requestSimpleURL:  http://ops.jm.taobao.net/taokeeper/monitor.do）。适用于POST/Get请求<br>
+	 * 获取一个请求的简单URL（requestSimpleURL:  http://ops.jm.foo.net/taokeeper/monitor.do）。适用于POST/Get请求<br>
 	 * 注意：本方法不含任何参数<br>
 	 * @return String requestSimpleURL
 	 * 
