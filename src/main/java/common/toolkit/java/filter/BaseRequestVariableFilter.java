@@ -15,6 +15,7 @@ import common.toolkit.java.util.system.SystemUtil;
 
 /**
  * Description: Setting variable for every request.
+ * 
  * @author nileader / nileader@gmail.com
  * @Date Jul 29, 2012
  */
@@ -23,14 +24,20 @@ public class BaseRequestVariableFilter implements Filter {
 	public void destroy() {
 	}
 
-	public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException {
+	public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException,
+			ServletException {
 
 		HttpServletRequest req = ( HttpServletRequest ) request;
 
 		StringBuffer requestURL = req.getRequestURL();
 		String basePath = requestURL.substring( 0, requestURL.indexOf( req.getContextPath() ) ) + req.getContextPath();
 		String hostName = SystemUtil.getHostName();
+		String baseHost = req.getServerName() + ":" + req.getServerPort();
+		String req_scheme = req.getScheme();
+		String req_url_header = req_scheme + "://" + baseHost;
 		request.setAttribute( "baseUrl", basePath );
+		request.setAttribute( "req_url_header", req_url_header );
+		request.setAttribute( "baseHost", baseHost );
 		request.setAttribute( "basePath", basePath );
 		request.setAttribute( "hostName", StringUtil.trimToEmpty( hostName ) );
 		setFlagIsFirerox( req );

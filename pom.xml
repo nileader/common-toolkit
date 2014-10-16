@@ -4,7 +4,7 @@
 	<groupId>common.toolkit</groupId>
 	<artifactId>common-toolkit</artifactId>
 	<name>common-toolkit</name>
-	<version>0.0.4</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 
@@ -29,7 +29,7 @@
 		<junit.version>4.8.2</junit.version>
 		<spring.mock.version>2.0-rc2</spring.mock.version>
 		<commons-logging.version>1.1.1</commons-logging.version>
-		<slf4j.version>1.5.8</slf4j.version>
+		<slf4j.version>1.7.7</slf4j.version>
 		<log4j.version>1.2.14</log4j.version>
 		<javamail.version>1.4.3</javamail.version>
 		<ganymed.ssh.version>build210</ganymed.ssh.version>
@@ -200,12 +200,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>jcl104-over-slf4j</artifactId>
-				<version>${slf4j.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
 				<version>${slf4j.version}</version>
 				<scope>provided</scope>
@@ -276,10 +270,6 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl104-over-slf4j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
