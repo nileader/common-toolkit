@@ -329,39 +329,57 @@ sync_repo() {
   local up_top
   up_top=$(unpushed_first "$dir")
 
-  # 收集变更并按状态打标签(新增/删除/修改/未跟踪/重命名/复制)，替代原来统一的 [改]
-  # git status --porcelain 行格式: "XY path" (重命名/复制为 "XY new\told")
-  local labeled="" file_count=0 line x y rest path label
+  # 三分类收集：已暂存(staged, 索引相对HEAD) / 未暂存(unstaged, 工作区相对索引) / 未跟踪(untracked)
+  # git status --porcelain 行格式: "XY path"（重命名/复制为 "XY new\told"）
+  # 一个文件可能同时出现在"已暂存"和"未暂存"（部分暂存），与 git status 行为一致
+  local staged="" unstaged="" untracked=""
+  local s_cnt=0 u_cnt=0 t_cnt=0 line x y rest path lbl
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     x="${line:0:1}"; y="${line:1:1}"; rest="${line:3}"
     path="${rest%%$'\t'*}"   # 重命名/复制只取新路径
-    if   [ "$x" = "?" ] && [ "$y" = "?" ]; then label="未跟踪"
-    elif [ "$x" = "D" ] || [ "$y" = "D" ]; then label="删除"
-    elif [ "$x" = "A" ] || [ "$y" = "A" ]; then label="新增"
-    elif [ "$x" = "R" ] || [ "$y" = "R" ]; then label="重命名"
-    elif [ "$x" = "C" ] || [ "$y" = "C" ]; then label="复制"
-    else label="修改"
+    if [ "$x" = "?" ] && [ "$y" = "?" ]; then
+      untracked+="${path}"$'\n'; t_cnt=$((t_cnt+1)); continue
     fi
-    labeled+="${label}"$'\t'"${path}"$'\n'
-    file_count=$((file_count+1))
+    # 已暂存：X 非 space（已 add 到索引）
+    if [ "$x" != " " ]; then
+      case "$x" in A) lbl="新增";; D) lbl="删除";; R) lbl="重命名";; C) lbl="复制";; *) lbl="修改";; esac
+      staged+="${lbl}"$'\t'"${path}"$'\n'; s_cnt=$((s_cnt+1))
+    fi
+    # 未暂存：Y 非 space（工作区相对索引还有改动）
+    if [ "$y" != " " ]; then
+      case "$y" in D) lbl="删除";; A) lbl="新增";; R) lbl="重命名";; C) lbl="复制";; *) lbl="修改";; esac
+      unstaged+="${lbl}"$'\t'"${path}"$'\n'; u_cnt=$((u_cnt+1))
+    fi
   done < <(git -C "$dir" status --porcelain 2>/dev/null)
+  local total=$((s_cnt + u_cnt + t_cnt))
 
   echo ""
   printf "${YELLOW}📂 %s${NC}\n" "$name"
-  if [ "$file_count" -gt 0 ]; then
-    printf "${YELLOW}  待提交（含 gitlink bump）：%s 个${NC}\n" "$file_count"
-    printf "%s" "$labeled" | while IFS=$'\t' read -r lbl pth; do
-      [ -z "${pth:-}" ] && continue
-      case "$lbl" in
-        新增)         c="$GREEN" ;;
-        删除)         c="$RED" ;;
-        未跟踪)       c="$CYAN" ;;
-        重命名|复制)  c="$BLUE" ;;
-        *)           c="$YELLOW" ;;
-      esac
-      printf "    ${c}[%s]${NC} %s\n" "$lbl" "$pth"
-    done
+  if [ "$total" -gt 0 ]; then
+    if [ "$s_cnt" -gt 0 ]; then
+      printf "${GREEN}  ▸ 已暂存待提交（%s）:${NC}\n" "$s_cnt"
+      printf "%s" "$staged" | while IFS=$'\t' read -r lbl pth; do
+        [ -z "${pth:-}" ] && continue
+        printf "      ${GREEN}[%s]${NC} %s\n" "$lbl" "$pth"
+      done
+    fi
+    if [ "$u_cnt" -gt 0 ]; then
+      printf "${YELLOW}  ▸ 未暂存变更（%s）:${NC}\n" "$u_cnt"
+      printf "%s" "$unstaged" | while IFS=$'\t' read -r lbl pth; do
+        [ -z "${pth:-}" ] && continue
+        c="$YELLOW"
+        case "$lbl" in 删除) c="$RED";; 重命名|复制) c="$BLUE";; 新增) c="$GREEN";; esac
+        printf "      ${c}[%s]${NC} %s\n" "$lbl" "$pth"
+      done
+    fi
+    if [ "$t_cnt" -gt 0 ]; then
+      printf "${CYAN}  ▸ 未跟踪（%s）:${NC}\n" "$t_cnt"
+      printf "%s" "$untracked" | while IFS= read -r pth; do
+        [ -z "${pth:-}" ] && continue
+        printf "      ${CYAN}%s${NC}\n" "$pth"
+      done
+    fi
     if [ "$DRY_RUN" = 0 ]; then
       read -rp $'\n'"是否提交以上变更? (y/n): " answer </dev/tty
       case "$answer" in
