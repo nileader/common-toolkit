@@ -250,7 +250,7 @@ sync_repo() {
   while IFS= read -r sub; do
     [ -z "$sub" ] && continue
     if [ -n "$fetch_failed" ] && printf '%s\n' "$fetch_failed" | grep -qxF "$sub"; then
-      warn "  → 跳过 $sub（本轮 fetch 失败，下次再试）"
+      warn "  → 跳过 ${sub}（本轮 fetch 失败，下次再试）"
       continue
     fi
     local sd="$dir/$sub"
@@ -259,12 +259,12 @@ sync_repo() {
       if [ "$DRY_RUN" = 0 ]; then
         read -rp "  是否初始化 $sub? (y/n): " ans </dev/tty
         if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
-          git -C "$dir" submodule update --init "$sub" 2>/dev/null && ok "已初始化 $sub" || { warn "初始化失败: $sub，跳过"; continue; }
+          git -C "$dir" submodule update --init "$sub" 2>/dev/null && ok "已初始化 $sub" || { warn "初始化失败: ${sub}，跳过"; continue; }
         else
           warn "跳过 $sub"; continue
         fi
       else
-        info "(dry-run) 未初始化: $sub（真实运行会询问是否 init）"
+        info "(dry-run) 未初始化: ${sub}（真实运行会询问是否 init）"
         continue
       fi
     fi
@@ -277,7 +277,7 @@ sync_repo() {
 
     # [本地改动]
     if is_dirty "$sd" || [ -n "$sub_up" ]; then
-      act "  → [本地改动] 递归提交 $sub（提交+push 后回写 gitlink）"
+      act "  → [本地改动] 递归提交 ${sub}（提交+push 后回写 gitlink）"
       if [ "$DRY_RUN" = 0 ]; then
         sync_repo "$sd" false || { warn "submodule $sub 同步失败，跳过 bump"; continue; }
         git -C "$dir" add "$sub"
@@ -301,7 +301,7 @@ sync_repo() {
         if [ "$DRY_RUN" = 0 ]; then
           git -C "$dir" submodule update --init "$sub" 2>/dev/null || warn "update $sub 失败"
           local wd2; wd2=$(sha_workdir "$sd")
-          [ "$wd2" = "$rec" ] && ok "  ③ 校准成功" || warn "  ③ 校准未达 $rec，请检查"
+          [ "$wd2" = "$rec" ] && ok "  ③ 校准成功" || warn "  ③ 校准未达 ${rec}，请检查"
         fi
       fi
       continue
