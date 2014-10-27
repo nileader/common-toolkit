@@ -144,6 +144,91 @@ wt_overlap() {
   comm -12 <(printf '%s\n' "$rc_clean") <(printf '%s\n' "$lc_clean") 2>/dev/null || true
 }
 
+# ── Step1c 白名单预检：白名单文件有未暂存改动 / 白名单目录有未跟踪新文件 ──
+# 命中即中止，由用户自行检查并 git add（脚本绝不自动暂存白名单文件）。
+# 白名单来源：$GIT_SYNC_WHITELIST 环境变量，否则默认 $HOME/.config/my-config/readonly-whitelist
+#   （用户级本地配置，是否入库取决于该目录的 gitignore 状态，脚本不关心）。
+#   每行一个 path/glob（相对仓库根），# 开头注释，空行忽略；可指向目录。
+#   仅拦"未暂存/未跟踪"——已 git add 的不拦（用户已显式确认）。
+#   文件不存在 → 报错中止（仅顶层 home 仓库调用，submodule 递归不调用）。
+whitelist_violations() {
+  local dir="$1" wl
+  wl="${GIT_SYNC_WHITELIST:-$HOME/.config/my-config/readonly-whitelist}"
+  if [ ! -f "$wl" ]; then
+    printf "${YELLOW}[WARN]${NC}  白名单文件不存在: %s\n" "$wl" >&2
+    printf "${YELLOW}[WARN]${NC}  必须创建该文件（哪怕内容为空）：  mkdir -p %s && touch \"%s\"\n" "${wl%/*}" "$wl" >&2
+    return 1
+  fi
+  local out="" pat
+  while IFS= read -r pat; do
+    case "$pat" in ''|\#*) continue;; esac
+    # 去首尾空白
+    pat="${pat#"${pat%%[![:space:]]*}"}"
+    pat="${pat%"${pat##*[![:space:]]}"}"
+    [ -z "$pat" ] && continue
+    local st line x y
+    st=$(git -C "$dir" status --porcelain -- "$pat" 2>/dev/null)
+    [ -z "$st" ] && continue
+    while IFS= read -r line; do
+      [ -z "$line" ] && continue
+      x="${line:0:1}"; y="${line:1:1}"
+      # 未跟踪(??) 或 有未暂存分量(y 非空格) → 违规
+      if [ "$x" = "?" ] || { [ "$y" != " " ] && [ "$y" != "" ]; }; then
+        out+="$line"$'\n'
+      fi
+    done <<< "$st"
+  done < "$wl"
+  # 去重：白名单里重叠的 pathspec（如 a 与 a/）可能让同一文件被报多次
+  printf '%s' "$out" | sort -u
+}
+
+# 把 git status --porcelain 行按三分类(已暂存/未暂存/未跟踪)+状态标签 显示
+# 复用本脚本一贯风格；从 stdin 读 porcelain 行，分类显示输出到 stdout
+# 一个文件可能同时出现在"已暂存"和"未暂存"（部分暂存），与 git status 行为一致
+display_porcelain_categorized() {
+  local line x y rest path lbl
+  local staged="" unstaged="" untracked=""
+  local s_cnt=0 u_cnt=0 t_cnt=0
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    x="${line:0:1}"; y="${line:1:1}"; rest="${line:3}"
+    path="${rest%%$'\t'*}"   # 重命名/复制只取新路径
+    if [ "$x" = "?" ] && [ "$y" = "?" ]; then
+      untracked+="${path}"$'\n'; t_cnt=$((t_cnt+1)); continue
+    fi
+    if [ "$x" != " " ]; then   # 已暂存：X 非 space
+      case "$x" in A) lbl="新增";; D) lbl="删除";; R) lbl="重命名";; C) lbl="复制";; *) lbl="修改";; esac
+      staged+="${lbl}"$'\t'"${path}"$'\n'; s_cnt=$((s_cnt+1))
+    fi
+    if [ "$y" != " " ]; then   # 未暂存：Y 非 space
+      case "$y" in D) lbl="删除";; A) lbl="新增";; R) lbl="重命名";; C) lbl="复制";; *) lbl="修改";; esac
+      unstaged+="${lbl}"$'\t'"${path}"$'\n'; u_cnt=$((u_cnt+1))
+    fi
+  done
+  if [ "$s_cnt" -gt 0 ]; then
+    printf "${GREEN}  ▸ 已暂存待提交（%s）:${NC}\n" "$s_cnt"
+    printf "%s" "$staged" | while IFS=$'\t' read -r lbl pth; do
+      [ -z "${pth:-}" ] && continue
+      printf "      ${GREEN}[%s]${NC} %s\n" "$lbl" "$pth"
+    done
+  fi
+  if [ "$u_cnt" -gt 0 ]; then
+    printf "${YELLOW}  ▸ 未暂存变更（%s）:${NC}\n" "$u_cnt"
+    printf "%s" "$unstaged" | while IFS=$'\t' read -r lbl pth; do
+      [ -z "${pth:-}" ] && continue
+      c="$YELLOW"; case "$lbl" in 删除) c="$RED";; 重命名|复制) c="$BLUE";; 新增) c="$GREEN";; esac
+      printf "      ${c}[%s]${NC} %s\n" "$lbl" "$pth"
+    done
+  fi
+  if [ "$t_cnt" -gt 0 ]; then
+    printf "${CYAN}  ▸ 未跟踪（%s）:${NC}\n" "$t_cnt"
+    printf "%s" "$untracked" | while IFS= read -r pth; do
+      [ -z "${pth:-}" ] && continue
+      printf "      ${CYAN}%s${NC}\n" "$pth"
+    done
+  fi
+}
+
 # 带 timeout 的 fetch（进度输出到终端，避免静默卡死）；返回 fetch 退出码
 _fetch_one() {
   local d="$1" t="${2:-60}"
@@ -188,9 +273,9 @@ sync_repo() {
     fi
   done <<< "$(sub_paths "$dir")"
 
-  # ── Step 1: 冲突预检（内容冲突 + 工作区脏文件重叠）──
+  # ── Step 1: 冲突预检（内容冲突 + 工作区脏文件重叠 + 白名单未暂存）──
   info "Step1 冲突预检..."
-  local cf wo
+  local cf wo wv
   cf=$(conflict_content "$dir")
   if [ -n "$cf" ]; then
     warn "主仓库本地与远端内容冲突，需手动合并："
@@ -212,6 +297,15 @@ sync_repo() {
     warn "以下文件本地和远端都改了，pull 会覆盖本地改动，请先手动合并："
     echo "$wo" | sed 's/^/    /'
     return 1
+  fi
+  # 1c 白名单预检：仅顶层 home 仓库；白名单文件不存在则报错中止
+  if $is_home; then
+    wv=$(whitelist_violations "$dir") || return 1
+    if [ -n "$wv" ]; then
+      warn "以下白名单文件有未暂存改动/未跟踪新文件，请检查并 git add 后重跑（脚本不自动暂存）："
+      printf '%s\n' "$wv" | display_porcelain_categorized
+      return 1
+    fi
   fi
   ok "Step1 无冲突"
 
@@ -329,57 +423,14 @@ sync_repo() {
   local up_top
   up_top=$(unpushed_first "$dir")
 
-  # 三分类收集：已暂存(staged, 索引相对HEAD) / 未暂存(unstaged, 工作区相对索引) / 未跟踪(untracked)
-  # git status --porcelain 行格式: "XY path"（重命名/复制为 "XY new\told"）
-  # 一个文件可能同时出现在"已暂存"和"未暂存"（部分暂存），与 git status 行为一致
-  local staged="" unstaged="" untracked=""
-  local s_cnt=0 u_cnt=0 t_cnt=0 line x y rest path lbl
-  while IFS= read -r line; do
-    [ -z "$line" ] && continue
-    x="${line:0:1}"; y="${line:1:1}"; rest="${line:3}"
-    path="${rest%%$'\t'*}"   # 重命名/复制只取新路径
-    if [ "$x" = "?" ] && [ "$y" = "?" ]; then
-      untracked+="${path}"$'\n'; t_cnt=$((t_cnt+1)); continue
-    fi
-    # 已暂存：X 非 space（已 add 到索引）
-    if [ "$x" != " " ]; then
-      case "$x" in A) lbl="新增";; D) lbl="删除";; R) lbl="重命名";; C) lbl="复制";; *) lbl="修改";; esac
-      staged+="${lbl}"$'\t'"${path}"$'\n'; s_cnt=$((s_cnt+1))
-    fi
-    # 未暂存：Y 非 space（工作区相对索引还有改动）
-    if [ "$y" != " " ]; then
-      case "$y" in D) lbl="删除";; A) lbl="新增";; R) lbl="重命名";; C) lbl="复制";; *) lbl="修改";; esac
-      unstaged+="${lbl}"$'\t'"${path}"$'\n'; u_cnt=$((u_cnt+1))
-    fi
-  done < <(git -C "$dir" status --porcelain 2>/dev/null)
-  local total=$((s_cnt + u_cnt + t_cnt))
+  # 收集变更并按三分类(已暂存/未暂存/未跟踪)+状态标签 显示，复用 display_porcelain_categorized
+  local disp
+  disp=$(git -C "$dir" status --porcelain 2>/dev/null | display_porcelain_categorized || true)
 
   echo ""
   printf "${YELLOW}📂 %s${NC}\n" "$name"
-  if [ "$total" -gt 0 ]; then
-    if [ "$s_cnt" -gt 0 ]; then
-      printf "${GREEN}  ▸ 已暂存待提交（%s）:${NC}\n" "$s_cnt"
-      printf "%s" "$staged" | while IFS=$'\t' read -r lbl pth; do
-        [ -z "${pth:-}" ] && continue
-        printf "      ${GREEN}[%s]${NC} %s\n" "$lbl" "$pth"
-      done
-    fi
-    if [ "$u_cnt" -gt 0 ]; then
-      printf "${YELLOW}  ▸ 未暂存变更（%s）:${NC}\n" "$u_cnt"
-      printf "%s" "$unstaged" | while IFS=$'\t' read -r lbl pth; do
-        [ -z "${pth:-}" ] && continue
-        c="$YELLOW"
-        case "$lbl" in 删除) c="$RED";; 重命名|复制) c="$BLUE";; 新增) c="$GREEN";; esac
-        printf "      ${c}[%s]${NC} %s\n" "$lbl" "$pth"
-      done
-    fi
-    if [ "$t_cnt" -gt 0 ]; then
-      printf "${CYAN}  ▸ 未跟踪（%s）:${NC}\n" "$t_cnt"
-      printf "%s" "$untracked" | while IFS= read -r pth; do
-        [ -z "${pth:-}" ] && continue
-        printf "      ${CYAN}%s${NC}\n" "$pth"
-      done
-    fi
+  if [ -n "$disp" ]; then
+    printf '%s\n' "$disp"
     if [ "$DRY_RUN" = 0 ]; then
       read -rp $'\n'"是否提交以上变更? (y/n): " answer </dev/tty
       case "$answer" in
