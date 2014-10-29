@@ -75,8 +75,12 @@ $line"
 }
 
 # 收集有改动的工程(每工程一块,多行),遍历工作区所有 git 工程(一级 + 二级 + 三级 aurix-pod/*)
+# 被工作区根仓库 .gitignore 规则忽略的仓库不显示(如工具型备份仓库),判定交给 git check-ignore,零硬编码
 repo_lines=""
 for sub in $(find "$workspace_root" -maxdepth 3 -name .git \( -type d -o -type f \) 2>/dev/null | sed 's|/.git$||' | sort -u); do
+  if git -C "$workspace_root" check-ignore -q "$sub" 2>/dev/null; then
+    continue
+  fi
   s=$(git_summary "$sub")
   [ -n "$s" ] && repo_lines="${repo_lines:+$repo_lines
 }$s"
