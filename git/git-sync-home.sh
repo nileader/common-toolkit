@@ -91,6 +91,24 @@ remote_reachable() {
 }
 is_dirty() { [ -n "$(git -C "$1" status --porcelain 2>/dev/null)" ]; }
 
+# detached → 切回默认分支(master 优先, 回退 main)并 ff 到 target
+# 让跑完同步的子仓库 HEAD 挂在分支上，而非停在 detached commit（submodule update / ff 在
+# detached 上推进后的固有副作用）。工作区已在 target 时为 no-op；切分支或 ff 失败则留 detached 并告警。
+reattach_branch() {
+  local sd="$1" target="$2" br
+  br=$(git -C "$sd" rev-parse --abbrev-ref HEAD)
+  [ "$br" != "HEAD" ] && return 0          # 已在分支上，无需处理
+  br=master
+  git -C "$sd" show-ref --verify -q refs/heads/master || br=main
+  if ! git -C "$sd" show-ref --verify -q "refs/heads/$br"; then
+    warn "  $(basename "$sd") 无 master/main 分支，留 detached"; return 0
+  fi
+  git -C "$sd" checkout "$br" 2>/dev/null \
+    || { warn "  $(basename "$sd") 切回 $br 失败，留 detached"; return 0; }
+  git -C "$sd" merge --ff-only "$target" 2>/dev/null \
+    || warn "  $br ff 到 ${target:0:8} 失败，留 detached"
+}
+
 # git merge-tree --write-tree 是否受支持（git>=2.38）；结果全局缓存，按需探测一次
 _merge_tree_supported=""
 merge_tree_ok() {
@@ -394,6 +412,7 @@ sync_repo() {
         act "  → [待更新submodule] $sub → submodule update"
         if [ "$DRY_RUN" = 0 ]; then
           git -C "$dir" submodule update --init "$sub" 2>/dev/null || warn "update $sub 失败"
+          reattach_branch "$sd" "$rec"
           local wd2; wd2=$(sha_workdir "$sd")
           [ "$wd2" = "$rec" ] && ok "  ③ 校准成功" || warn "  ③ 校准未达 ${rec}，请检查"
         fi
@@ -405,6 +424,7 @@ sync_repo() {
     if [ -n "$wd" ] && [ "$wd" != "$rem" ] && is_anc "$sd" "$wd" "$rem"; then
       act "  → ff $sub 工作区到远端 ${rem:0:8}"
       if [ "$DRY_RUN" = 0 ]; then
+        reattach_branch "$sd" "$rem"
         git -C "$sd" merge --ff-only "$rem" 2>/dev/null || warn "  ff 失败"
         wd=$(sha_workdir "$sd")
       else
@@ -445,6 +465,13 @@ sync_repo() {
             info "pull --rebase 整合远端..."
             git -C "$dir" pull --rebase 2>/dev/null || warn "pull --rebase 失败，请手动处理"
             git -C "$dir" submodule update --init --recursive 2>/dev/null || true
+            local _sub
+            while IFS= read -r _sub; do
+              [ -z "$_sub" ] && continue
+              local _sd="$dir/$_sub"
+              [ -d "$_sd" ] || continue
+              reattach_branch "$_sd" "$(sha_remote "$_sd")"
+            done <<< "$(sub_paths "$dir")"
           fi
           ;;
         *) info "跳过提交（gitlink 已暂存于 index，未提交）";;
@@ -497,7 +524,7 @@ sync_repo() {
     fi
   fi
 
-  $is_home && lock_settings
+  $is_home && lock_settings || true
 }
 
 # ── 主循环 ───────────────────────────────────────────────────
