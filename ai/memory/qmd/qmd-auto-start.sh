@@ -13,7 +13,7 @@ QMD_DIR="$HOME/workspace/common-toolkit/ai/memory/qmd"
 PID_FILE="$QMD_DIR/qmd-auto.pid"
 LOG="$QMD_DIR/qmd-auto.log"
 LOCK="$QMD_DIR/qmd-auto.lock"
-INTERVAL="${QMD_INTERVAL:-1800}"     # 默认 30 分钟
+INTERVAL="${QMD_INTERVAL:-3600}"     # 默认 1 小时
 
 # 已在跑 → 幂等退出
 if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
@@ -46,6 +46,17 @@ setsid bash -c '
     qmd update 2>&1 | tail -n 5
     log "=== qmd embed ==="
     qmd embed 2>&1 | tail -n 5
+    log "=== qmd cleanup ==="
+    qmd cleanup 2>&1 | tail -n 5
+    # 刷新 statusline 缓存（供 qmd-statusline.sh 读，避免 statusline 每次跑 qmd status）
+    CACHE_DIR="$HOME/.cache/qmd"; mkdir -p "$CACHE_DIR" 2>/dev/null
+    CACHE="$CACHE_DIR/.statusline-cache"
+    st_out=$(qmd status 2>/dev/null)
+    c_files=$(echo "$st_out"   | grep -iE "Total:.*files" | grep -oE "[0-9]+ files" | grep -oE "[0-9]+" | head -1)
+    c_vectors=$(echo "$st_out" | grep -iE "Vectors:" | grep -oE "[0-9]+" | head -1)
+    c_orphan=$(echo "$st_out"  | grep -iE "Orphaned:" | grep -oE "[0-9]+" | head -1)
+    [ -z "$c_orphan" ] && c_orphan=0
+    echo "$c_files|$c_vectors|$c_orphan|$now" > "$CACHE"
     log "=== done ==="
   } 9>"$LOCK"
 
@@ -53,6 +64,7 @@ setsid bash -c '
   trap "log \"loop stopped by signal\"; exit 0" TERM INT
 
   while true; do
+    now=$(date +%s)
     run_once
     sleep "$INTERVAL"
   done

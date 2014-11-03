@@ -1,6 +1,6 @@
 # qmd 自动更新守护脚本
 
-给 `~/workspace/work-context` 和 `~/workspace/work-agent/work-note` 两个 md 目录做**每 30 分钟一次的增量索引更新**。避免每次改笔记都手动跑 `qmd update && qmd embed`。
+给 `~/workspace/work-context` 和 `~/workspace/work-agent/work-note` 两个 md 目录做**每 1 小时一次的增量索引更新**。每轮跑 `qmd update → qmd embed → qmd cleanup`：`update` 增量同步文件增删改，`embed` 给新文件生成向量，`cleanup` 回收"文件已删/改但向量残留"的孤儿 chunk（前两步覆盖不到，需 `cleanup` 兜底）。避免每次改笔记都手动跑。
 
 **与 TDAI（TencentDB Agent Memory）栈完全独立** —— 不共享 pid / log / lock；qmd 挂了不影响 TDAI，反之亦然。
 
@@ -8,7 +8,7 @@
 
 | 脚本 | 作用 |
 |---|---|
-| `qmd-auto-start.sh` | 启动**持续**守护：后台每 `INTERVAL` 秒跑一次 `qmd update && qmd embed`，写 pid |
+| `qmd-auto-start.sh` | 启动**持续**守护：后台每 `INTERVAL` 秒跑一次 `qmd update && qmd embed && qmd cleanup`，写 pid |
 | `qmd-auto-start-1-time.sh` | **一次性**前台跑一轮增量（守护挂了兜底 / 加完新笔记想立刻生效） |
 | `qmd-auto-stop.sh` | 停止守护（SIGTERM，5 秒不退则 SIGKILL） |
 | `qmd-auto-status.sh` | 查状态 + 最近日志 |
@@ -37,10 +37,10 @@
 
 ## 调整间隔
 
-默认 1800 秒（30 分钟）。启动前设环境变量覆盖：
+默认 3600 秒（1 小时）。启动前设环境变量覆盖：
 
 ```sh
-QMD_INTERVAL=3600 ~/workspace/common-toolkit/ai/memory/qmd/qmd-auto-start.sh
+QMD_INTERVAL=7200 ~/workspace/common-toolkit/ai/memory/qmd/qmd-auto-start.sh
 ```
 
 ## 设计要点

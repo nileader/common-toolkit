@@ -106,6 +106,39 @@ if [ -n "$host" ]; then
     lines="Host：$host"
   fi
 fi
+
+# TDAI 记忆栈自检 —— 若本机装了 TencentDB-Agent-Memory fork 就在第 2 行点亮单行状态；
+# 未装 / 脚本不存在 / 超时 → 静默，statusline 不受影响。
+tdai_selfcheck="$HOME/workspace/common-toolkit/ai/memory/tdai/cc-statusline-tdai-check.sh"
+if [ -x "$tdai_selfcheck" ]; then
+  tdai_status=$(timeout 0.5 "$tdai_selfcheck" --oneline 2>/dev/null)
+  if [ -n "$tdai_status" ]; then
+    lines="$lines
+$tdai_status"
+  fi
+fi
+
+# qmd 索引栈状态 —— 紧跟 TDAI 那行；读缓存(<1ms)或 fallback qmd status(~0.3s)。
+# 未装 / 脚本不存在 → 静默。
+qmd_probe="$HOME/workspace/common-toolkit/ai/memory/qmd/cc-statusline-qmd-check.sh"
+if [ -x "$qmd_probe" ]; then
+  qmd_status=$(timeout 2 "$qmd_probe" 2>/dev/null)
+  if [ -n "$qmd_status" ]; then
+    lines="$lines
+$qmd_status"
+  fi
+fi
+
+# 系统安全态探针 —— agenttrack/otel 采集进程与缓存目录加固状态；未装/脚本不存在 → 静默。
+sec_probe="$HOME/workspace/tool/system_security_check/system_security_check.sh"
+if [ -x "$sec_probe" ]; then
+  sec_status=$(timeout 2 "$sec_probe" 2>/dev/null)
+  if [ -n "$sec_status" ]; then
+    lines="$lines
+$sec_status"
+  fi
+fi
+
 if [ -n "$repo_lines" ]; then
   lines="$lines
 
