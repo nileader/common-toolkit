@@ -139,6 +139,17 @@ $sec_status"
   fi
 fi
 
+# kb-mcp 知识库检索栈状态 —— local-kb 向量检索(ollama+bge-m3+chroma)6 层探针；
+# --oneline 跳过 embed 实算与端到端检索，~0.3s；未装/脚本不存在 → 静默。
+kb_probe="$HOME/workspace/kb-mcp/kb-mcp-check.sh"
+if [ -x "$kb_probe" ]; then
+  kb_status=$(timeout 2 "$kb_probe" --oneline 2>/dev/null)
+  if [ -n "$kb_status" ]; then
+    lines="$lines
+$kb_status"
+  fi
+fi
+
 if [ -n "$repo_lines" ]; then
   lines="$lines
 
