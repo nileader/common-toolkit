@@ -20,6 +20,40 @@ C_RESET=$'\033[0m'
 C_NAME=$'\033[1;36m'     # 工程名:加粗青
 C_BRANCH=$'\033[1;33m'   # 分支:加粗黄
 
+# 跨平台超时调用：优先 GNU timeout(gtimeout)；macOS 无此时降级用 perl fork+alarm
+# (perl 自带)。perl alarm 只认整数秒，故降级路径把亚秒向上取整为整数秒(0.5→1)。
+# 统一接口 run_timeout SECS CMD...，超时返回 124，与 GNU timeout 行为一致。
+run_timeout() {
+  local secs=$1; shift
+  if [ ${#TIMEOUT_CMD[@]} -gt 0 ]; then
+    "${TIMEOUT_CMD[@]}" "$secs" "$@"
+    return $?
+  fi
+  # perl 降级：秒数向上取整为整数（perl alarm 只认整数秒）
+  # 用 awk ceil，避免 printf %.0f 的 banker's rounding 把 0.5 舍到 0
+  local int_secs
+  int_secs=$(awk -v s="$secs" 'BEGIN{print int(s)+(s>int(s))}' 2>/dev/null)
+  [ -z "$int_secs" ] || [ "$int_secs" -lt 1 ] 2>/dev/null && int_secs=1
+  perl -e '
+    my $secs = shift @ARGV; my @cmd = @ARGV;
+    my $pid = fork(); die "fork失败" unless defined $pid;
+    if ($pid == 0) { exec @cmd; exit 127; }
+    local $SIG{ALRM} = sub { kill "TERM", $pid; select(undef,undef,undef,0.3); kill "KILL", $pid if kill 0, $pid; exit 124; };
+    alarm $secs; waitpid($pid, 0); exit $? >> 8;
+  ' "$int_secs" "$@"
+}
+if command -v timeout >/dev/null 2>&1; then
+  TIMEOUT_CMD=(timeout)
+elif command -v gtimeout >/dev/null 2>&1; then
+  TIMEOUT_CMD=(gtimeout)
+else
+  TIMEOUT_CMD=()
+fi
+
+# 探针静默调试：STATUSLINE_DEBUG=1 时，[ -x ] 为假或超时退出码非 0 往 stderr 提示，
+# 便于区分"没装/路径错"与"探针本身无输出"。默认关，不污染 statusline stdout。
+probe_debug() { [ "${STATUSLINE_DEBUG:-0}" = 1 ] && printf '%s\n' "$*" >&2; }
+
 # 单个 git 仓库的变更摘要,多行块输出:
 #   - 名称:分支
 #       [暂N 未跟踪N 修改N 删除N]
@@ -111,43 +145,51 @@ fi
 # 未装 / 脚本不存在 / 超时 → 静默，statusline 不受影响。
 tdai_selfcheck="$HOME/workspace/common-toolkit/ai/memory/tdai/cc-statusline-tdai-check.sh"
 if [ -x "$tdai_selfcheck" ]; then
-  tdai_status=$(timeout 0.5 "$tdai_selfcheck" --oneline 2>/dev/null)
+  tdai_status=$(run_timeout 0.5 "$tdai_selfcheck" --oneline 2>/dev/null)
   if [ -n "$tdai_status" ]; then
     lines="$lines
 $tdai_status"
   fi
+else
+  probe_debug "TDAI 探针缺失或不可执行：$tdai_selfcheck"
 fi
 
 # qmd 索引栈状态 —— 紧跟 TDAI 那行；读缓存(<1ms)或 fallback qmd status(~0.3s)。
 # 未装 / 脚本不存在 → 静默。
 qmd_probe="$HOME/workspace/common-toolkit/ai/memory/qmd/cc-statusline-qmd-check.sh"
 if [ -x "$qmd_probe" ]; then
-  qmd_status=$(timeout 2 "$qmd_probe" 2>/dev/null)
+  qmd_status=$(run_timeout 2 "$qmd_probe" 2>/dev/null)
   if [ -n "$qmd_status" ]; then
     lines="$lines
 $qmd_status"
   fi
+else
+  probe_debug "qmd 探针缺失或不可执行：$qmd_probe"
 fi
 
 # 系统安全态探针 —— agenttrack/otel 采集进程与缓存目录加固状态；未装/脚本不存在 → 静默。
 sec_probe="$HOME/workspace/tool/system_security_check/system_security_check.sh"
 if [ -x "$sec_probe" ]; then
-  sec_status=$(timeout 2 "$sec_probe" 2>/dev/null)
+  sec_status=$(run_timeout 2 "$sec_probe" 2>/dev/null)
   if [ -n "$sec_status" ]; then
     lines="$lines
 $sec_status"
   fi
+else
+  probe_debug "安全态探针缺失或不可执行：$sec_probe"
 fi
 
 # kb-mcp 知识库检索栈状态 —— local-kb 向量检索(ollama+bge-m3+chroma)6 层探针；
 # --oneline 跳过 embed 实算与端到端检索，~0.3s；未装/脚本不存在 → 静默。
 kb_probe="$HOME/workspace/kb-mcp/kb-mcp-check.sh"
 if [ -x "$kb_probe" ]; then
-  kb_status=$(timeout 2 "$kb_probe" --oneline 2>/dev/null)
+  kb_status=$(run_timeout 2 "$kb_probe" --oneline 2>/dev/null)
   if [ -n "$kb_status" ]; then
     lines="$lines
 $kb_status"
   fi
+else
+  probe_debug "kb-mcp 探针缺失或不可执行：$kb_probe"
 fi
 
 if [ -n "$repo_lines" ]; then
