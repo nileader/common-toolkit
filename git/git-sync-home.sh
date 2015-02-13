@@ -142,12 +142,19 @@ conflict_content() {
   comm -12 <(printf '%s\n' "$rc" | sort -u) <(printf '%s\n' "$lc" | sort -u) 2>/dev/null || true
 }
 
-# ── Step1b 工作区脏文件 ∩ 远端要改的文件（排除 submodule 路径）──
-# 非空 → pull 会覆盖本地未提交改动，应中止让用户手动合并
+# ── Step1b 工作区脏文件 ∩ 远端将带来的改动（排除 submodule 路径）──
+# 非空 → pull 会覆盖本地未提交改动，应中止让用户手动合并。
+# rc 必须用三点 diff(HEAD...r == diff(merge-base,r))，只取"远端独有的改动"：
+#   · 本地领先/相等 → merge-base==r → rc 空 → 不中止（pull 是 no-op，不可能覆盖本地）
+#   · 本地落后(纯快进) → rc 精确等于远端带来的改动
+#   · 分叉           → rc 只含远端独有改动，不混入本地改动
+# 旧版用两点 diff(HEAD "$r") 是对称差异，本地领先时会把"本地领先 commit 改的文件"
+# 误当成"远端要改的文件"，与工作区脏文件取交集后虚报冲突（Step1a conflict_content
+# 靠 is_anc 快进短路规避了同类问题，本函数改用三点 diff 从语义根上根治）。
 wt_overlap() {
   local dir="$1" r rc lc subs rc_clean lc_clean
   r=$(sha_remote "$dir"); [ -z "$r" ] && return 0
-  rc=$(git -C "$dir" diff --name-only HEAD "$r" 2>/dev/null)
+  rc=$(git -C "$dir" diff --name-only "HEAD...$r" 2>/dev/null)
   [ -z "$rc" ] && return 0
   lc=$(git -C "$dir" diff --name-only HEAD 2>/dev/null)
   [ -z "$lc" ] && return 0

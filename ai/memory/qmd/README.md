@@ -52,6 +52,6 @@ QMD_INTERVAL=7200 ~/workspace/common-toolkit/ai/memory/qmd/qmd-auto-start.sh
 
 ## 关联
 
-- 部署文档：`~/workspace/tool/claude-brain-docs/04-日常运维-操作手册.md` §1
-- qmd 本身：`~/workspace/tool/claude-brain-docs/qmd搭建-操作手册.md`
+- 部署文档：`~/workspace/install/TencentDB-Agent-Memory/claude-brain-docs/04-日常运维-操作手册.md` §1
+- qmd 本身：`~/workspace/install/TencentDB-Agent-Memory/claude-brain-docs/qmd搭建-操作手册.md`
 - 相关 auto-memory：`~/.claude/projects/-home-admin/memory/qmd-auto-update-daemon.md`
