@@ -48,6 +48,14 @@ act()    { printf "${CYAN}[ACT]${NC}   %s\n" "$*"; }
 header() { printf "\n${CYAN}══════════════════════════════════════════${NC}\n"; printf "${CYAN}  %s${NC}\n" "$*"; printf "${CYAN}══════════════════════════════════════════${NC}\n"; }
 
 has_git() { [ -d "$1/.git" ] || { git -C "$1" rev-parse --git-dir &>/dev/null; }; }
+# 目录必须是"自己的仓库根"：git rev-parse 会向上发现父仓库，未初始化的 submodule
+# 空目录用 has_git/rev-parse 判断会误报为有效仓库，导致拿父仓库状态做分类。
+is_own_repo() {
+  local top
+  top=$(git -C "$1" rev-parse --show-toplevel 2>/dev/null) || return 1
+  top=$(cd "$top" 2>/dev/null && pwd -P) || return 1
+  [ "$(cd "$1" && pwd -P)" = "$top" ]
+}
 
 die_or_skip() {
   local msg="$1" dir="${2:-}"
@@ -287,7 +295,7 @@ sync_repo() {
   while IFS= read -r sub; do
     [ -z "$sub" ] && continue
     local sd="$dir/$sub"
-    if [ ! -d "$sd" ] || ! has_git "$sd"; then continue; fi
+    if [ ! -d "$sd" ] || ! is_own_repo "$sd"; then continue; fi
     info "  fetch submodule: $sub"
     local rc=0
     _fetch_one "$sd" "${ft}" || rc=$?
@@ -373,7 +381,7 @@ sync_repo() {
       continue
     fi
     local sd="$dir/$sub"
-    if [ ! -d "$sd" ] || ! has_git "$sd"; then
+    if [ ! -d "$sd" ] || ! is_own_repo "$sd"; then
       warn "submodule 未初始化: $sub"
       if [ "$DRY_RUN" = 0 ]; then
         read -rp "  是否初始化 $sub? (y/n): " ans </dev/tty
