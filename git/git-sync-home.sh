@@ -23,12 +23,33 @@
 #
 # 三道保险：①bump 前目标 SHA 须在远端可达 ②push 前独立复查 ③submodule update 后 wd==gitlink
 #
-# 用法： git-sync.sh [--dry-run]
+# 用法： git-sync-home.sh [--dry-run] [-commit=true|false]
+#   -commit=true  (默认) Step4 询问是否提交，提交后再询问是否 push
+#   -commit=false Step4 不问不提交、Step5/6 不问不 push；仅做 fetch/对齐/校准/体检。
+#                 适用于 .zshrc 登录自动跑，避免每次登录被逐仓库的提交询问阻塞。
 
 set -euo pipefail
 
 DRY_RUN=0
-[ "${1:-}" = "--dry-run" ] && DRY_RUN=1
+# ALLOW_COMMIT=1 → Step4 询问是否提交、Step5/6 询问是否 push（默认，交互式）
+# ALLOW_COMMIT=0 → Step4 不问不提交、Step5/6 不问不 push（用于 .zshrc 登录自动跑，零提交交互）
+ALLOW_COMMIT=1
+
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=1 ;;
+    -commit=*)
+      case "${arg#-commit=}" in
+        true|1|yes|on)  ALLOW_COMMIT=1 ;;
+        false|0|no|off) ALLOW_COMMIT=0 ;;
+        *) printf "参数错误: %s （期望 -commit=true 或 -commit=false）\n" "$arg" >&2; exit 2 ;;
+      esac
+      ;;
+    -commit)
+      printf "参数错误: -commit 需要取值，用法 -commit=true 或 -commit=false\n" >&2; exit 2 ;;
+    *) printf "未知参数: %s\n用法: git-sync-home.sh [--dry-run] [-commit=true|false]\n" "$arg" >&2; exit 2 ;;
+  esac
+done
 
 # timeout 命令：Linux 用 timeout，macOS 用 gtimeout（需 brew install coreutils）；都没有则无超时
 TIMEOUT_BIN=""
@@ -466,7 +487,7 @@ sync_repo() {
   printf "${YELLOW}📂 %s${NC}\n" "$name"
   if [ -n "$disp" ]; then
     printf '%s\n' "$disp"
-    if [ "$DRY_RUN" = 0 ]; then
+    if [ "$DRY_RUN" = 0 ] && [ "$ALLOW_COMMIT" = 1 ]; then
       read -rp $'\n'"是否提交以上变更? (y/n): " answer </dev/tty
       case "$answer" in
         y|Y)
@@ -491,6 +512,8 @@ sync_repo() {
           ;;
         *) info "跳过提交（gitlink 已暂存于 index，未提交）";;
       esac
+    elif [ "$ALLOW_COMMIT" = 0 ]; then
+      info "(-commit=false) 跳过提交询问，变更保留在工作区/暂存区，请自行处理"
     else
       info "(dry-run) 不提交"
     fi
@@ -501,7 +524,8 @@ sync_repo() {
   fi
 
   # ── Step 5 / 6: ② push 前独立复查 + push（仅有未推送时）──
-  if [ "$DRY_RUN" = 0 ] && has_upstream "$dir"; then
+  # -commit=false 时本轮不提交，故也问"是否 push"——整段跳过
+  if [ "$DRY_RUN" = 0 ] && [ "$ALLOW_COMMIT" = 1 ] && has_upstream "$dir"; then
     local to_push; to_push=$(unpushed_first "$dir")
     if [ -z "$to_push" ]; then
       ok "$name 无未推送提交，跳过 push"
@@ -536,6 +560,12 @@ sync_repo() {
         y|Y) git -C "$dir" push 2>/dev/null || die_or_skip "push failed" "$dir"; ok "pushed $name" ;;
         *) info "已跳过 push（记得稍后 push）";;
       esac
+    fi
+  elif [ "$DRY_RUN" = 0 ] && [ "$ALLOW_COMMIT" = 0 ] && has_upstream "$dir"; then
+    # -commit=false：不提交也不 push，但要把"有未推送提交"如实告知，避免静默漏报
+    local to_push_nc; to_push_nc=$(unpushed_first "$dir")
+    if [ -n "$to_push_nc" ]; then
+      info "(-commit=false) 有未推送提交，未 push → $to_push_nc"
     fi
   fi
 
