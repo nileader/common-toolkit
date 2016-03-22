@@ -135,7 +135,10 @@ public class SSHUtil {
 					// 第四行通常是这样：
 					// Mem: 1572988k total, 1490452k used, 82536k free, 138300k
 					// buffers
-					String[] memArray = line.replace( MEM_USAGE_STRING, EMPTY_STRING ).split( COMMA );
+					//Ubuntu14下，第4行是这样：KiB Mem:   3037852 total,  1626320 used,  1411532 free,   141148 buffers
+					//Ubuntu14下，多了KiB,因此对此“KiB"进行替换
+					String[] memArray = line.replace("KiB",EMPTY_STRING).replace( MEM_USAGE_STRING, EMPTY_STRING ).split( COMMA );
+				
 					totalMem = StringUtil.trimToEmpty( memArray[0].replace( "total", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
 					freeMem = StringUtil.trimToEmpty( memArray[2].replace( "free", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
 					buffersMem = StringUtil.trimToEmpty( memArray[3].replace( "buffers", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
@@ -143,7 +146,10 @@ public class SSHUtil {
 					// 第四行通常是这样：
 					// Swap: 2096472k total, 252k used, 2096220k free, 788540k
 					// cached
-					String[] memArray = line.replace( SWAP_USAGE_STRING, EMPTY_STRING ).split( COMMA );
+					//Ubuntu14下,是这样：KiB Swap:  2093052 total,        0 used,  2093052 free.   523408 cached Mem
+					//Ubuntu14,free后是".",而不是",",导致分割时 memArray[3]为null;同时，最后多了"Mem"
+				        String[] memArray = line.replace(".",COMMA).replace("Mem", EMPTY_STRING).replace( SWAP_USAGE_STRING, EMPTY_STRING ).split( COMMA );
+
 					cachedMem = StringUtil.trimToEmpty( memArray[3].replace( "cached", EMPTY_STRING ) ).replace( "k", EMPTY_STRING );
 
 					if ( StringUtil.isBlank( totalMem, freeMem, buffersMem, cachedMem ) )
